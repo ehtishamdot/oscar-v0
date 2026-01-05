@@ -9,9 +9,10 @@ type CtaSectionProps = {
   description: string;
   buttonText: string;
   buttonLink?: string;
+  children?: ReactNode;
 };
 
-const CtaSection = ({ icon, title, description, buttonText, buttonLink }: CtaSectionProps) => {
+const CtaSection = ({ icon, title, description, buttonText, buttonLink, children }: CtaSectionProps) => {
 
   return (
     <Card className="shadow-md">
@@ -21,12 +22,13 @@ const CtaSection = ({ icon, title, description, buttonText, buttonLink }: CtaSec
             <CardTitle className="font-headline text-2xl">{title}</CardTitle>
         </div>
       </CardHeader>
-      <CardContent>
-        <CardDescription>{description}</CardDescription>
+      <CardContent className="space-y-4">
+        <CardDescription className="text-base">{description}</CardDescription>
+        {children}
       </CardContent>
       <CardFooter>
         {buttonLink ? (
-          <Button asChild 
+          <Button asChild
               className="w-full sm:w-auto"
               style={{
                   backgroundColor: 'hsl(var(--accent))',
@@ -36,7 +38,7 @@ const CtaSection = ({ icon, title, description, buttonText, buttonLink }: CtaSec
             <Link href={buttonLink}>{buttonText}</Link>
           </Button>
         ) : (
-            <Button 
+            <Button
                 className="w-full sm:w-auto"
                 style={{
                     backgroundColor: 'hsl(var(--accent))',
