@@ -1,0 +1,22 @@
+{
+  "placeholderImages": [
+    {
+      "id": "intro-image",
+      "description": "A calming image showing a person practicing gentle yoga, suggesting movement and well-being.",
+      "imageUrl": "https://images.unsplash.com/photo-1758274536773-23118f2de71c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxnZW50bGUlMjB5b2dhfGVufDB8fHx8MTc2NDQ5OTAxMXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gentle yoga"
+    },
+    {
+      "id": "physio-contact",
+      "description": "A medical diagram of a knee joint affected by osteoarthritis.",
+      "imageUrl": "https://storage.googleapis.com/res-aif-dev-prod-bucket/public/project_1939886077/1764724049876.png",
+      "imageHint": "knee osteoarthritis"
+    },
+    {
+      "id": "arthrosis-diagram",
+      "description": "Een medische illustratie die een gezond kniegewricht vergelijkt met een door artrose aangetast kniegewricht.",
+      "imageUrl": "https://storage.googleapis.com/res-aif-dev-prod-bucket/public/project_1939886077/1764758784841.png",
+      "imageHint": "knee arthrosis"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "entities": {
+    "therapist": {
+      "title": "Therapist",
+      "description": "Represents a physical therapist's practice.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the therapist or practice."
+        },
+        "address": {
+          "type": "string",
+          "description": "The physical address of the practice."
+        },
+        "phone": {
+          "type": "string",
+          "description": "The contact phone number for the practice."
+        },
+        "lat": {
+          "type": "number",
+          "description": "The latitude of the practice's location."
+        },
+        "lon": {
+          "type": "number",
+          "description": "The longitude of the practice's location."
+        }
+      },
+      "required": ["name", "address", "lat", "lon"]
+    }
+  },
+  "auth": {
+    "providers": []
+  },
+  "firestore": {
+    "/therapists/{therapistId}": {
+      "schema": {
+        "$ref": "#/backend/entities/therapist"
+      },
+      "description": "Stores information about individual therapist practices."
+    }
+  }
+}
