@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Removed 'output: export' to enable API routes for SMS functionality
-  // Firebase App Hosting supports SSR
+  output: 'export',
   typescript: {
     ignoreBuildErrors: true,
   },
