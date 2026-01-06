@@ -84,10 +84,10 @@ export default function ConfirmationPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold">3. Online intake of behandeling</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      <strong>Online behandelingen</strong> (diëtist, stoppen met roken, GLI): U wordt direct uitgenodigd voor online sessies.<br />
-                      <strong>Hybride behandelingen</strong> (fysio, ergo): Eerst een online intake, daarna koppeling met een therapeut bij u in de buurt.
-                    </p>
+                    <div className="text-sm text-muted-foreground mt-1 space-y-1">
+                      <p><strong>Online behandelingen</strong> (diëtist, stoppen met roken, GLI): U wordt direct uitgenodigd voor online sessies.</p>
+                      <p><strong>Hybride behandelingen</strong> (fysio, ergo): Eerst een online intake, daarna koppeling met een therapeut bij u in de buurt.</p>
+                    </div>
                   </div>
                 </div>
 

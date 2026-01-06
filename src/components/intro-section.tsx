@@ -44,13 +44,13 @@ const IntroSection = () => {
           </div>
 
           <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-            <p className="text-sm text-muted-foreground">
-              <strong>Hoe werkt het?</strong><br />
-              1. Beantwoord een korte vragenlijst<br />
-              2. Ontdek welke zorgpaden bij u passen<br />
-              3. Wij verbinden u met gespecialiseerde partners<br />
-              4. Start uw behandeling (online of bij u in de buurt)
-            </p>
+            <div className="text-sm text-muted-foreground space-y-1">
+              <p className="font-semibold">Hoe werkt het?</p>
+              <p>1. Beantwoord een korte vragenlijst</p>
+              <p>2. Ontdek welke zorgpaden bij u passen</p>
+              <p>3. Wij verbinden u met gespecialiseerde partners</p>
+              <p>4. Start uw behandeling (online of bij u in de buurt)</p>
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4">
