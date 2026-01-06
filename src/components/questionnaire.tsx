@@ -64,7 +64,7 @@ interface RadioQuestion extends BaseQuestion {
 
 interface CheckboxQuestion extends BaseQuestion {
   type: 'checkbox';
-  options: { id: string; text: string; exclusive?: boolean }[];
+  options: { id: string; text: string; exclusive?: boolean; hasTextField?: boolean }[];
   next: (selectedIds: string[]) => QuestionId;
 }
 
@@ -163,7 +163,7 @@ const questions: Record<string, Question> = {
       { id: 'sporten', text: 'Sporten / Bewegen' },
       { id: 'wandelen', text: 'Wandelen' },
       { id: 'sokken', text: 'Sokken/schoenen aantrekken' },
-      { id: 'anders', text: 'Anders' },
+      { id: 'anders', text: 'Anders, namelijk...', hasTextField: true },
       { id: 'geen', text: 'Nee, geen beperkingen', exclusive: true },
     ],
     next: () => 'Q_BMI_CALC',
@@ -342,6 +342,9 @@ const Questionnaire = () => {
   // Checkbox state
   const [selectedCheckboxes, setSelectedCheckboxes] = useState<string[]>([]);
 
+  // "Anders" text field state
+  const [andersText, setAndersText] = useState<string>('');
+
   const handleRadioAnswer = (answerValue: string) => {
     const currentQuestion = questions[currentQuestionId] as RadioQuestion;
     if (!currentQuestion) return;
@@ -363,12 +366,21 @@ const Questionnaire = () => {
     const currentQuestion = questions[currentQuestionId] as CheckboxQuestion;
     if (!currentQuestion) return;
 
-    const newAnswers = { ...answers, [currentQuestionId]: selectedCheckboxes };
+    // Store anders text if provided
+    const newAnswers: Record<string, string | string[] | number> = {
+      ...answers,
+      [currentQuestionId]: selectedCheckboxes,
+    };
+    if (andersText && selectedCheckboxes.includes('anders')) {
+      newAnswers[`${currentQuestionId}_anders_text`] = andersText;
+    }
+
     setAnswers(newAnswers);
     setHistory([...history, currentQuestionId]);
 
     const nextQuestionId = currentQuestion.next(selectedCheckboxes);
     setSelectedCheckboxes([]);
+    setAndersText('');
 
     if (nextQuestionId === 'END') {
       navigateToResults(newAnswers);
@@ -558,26 +570,39 @@ const Questionnaire = () => {
             <div className="space-y-4">
               <div className="space-y-3">
                 {(currentQuestion as CheckboxQuestion).options.map((option) => (
-                  <div
-                    key={option.id}
-                    className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                      selectedCheckboxes.includes(option.id)
-                        ? 'bg-primary/10 border-primary'
-                        : 'hover:bg-muted'
-                    }`}
-                    onClick={() => handleCheckboxChange(option.id, option.exclusive)}
-                  >
-                    <Checkbox
-                      id={option.id}
-                      checked={selectedCheckboxes.includes(option.id)}
-                      onCheckedChange={() => handleCheckboxChange(option.id, option.exclusive)}
-                    />
-                    <Label
-                      htmlFor={option.id}
-                      className="flex-1 cursor-pointer text-base"
+                  <div key={option.id}>
+                    <div
+                      className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                        selectedCheckboxes.includes(option.id)
+                          ? 'bg-primary/10 border-primary'
+                          : 'hover:bg-muted'
+                      }`}
+                      onClick={() => handleCheckboxChange(option.id, option.exclusive)}
                     >
-                      {option.text}
-                    </Label>
+                      <Checkbox
+                        id={option.id}
+                        checked={selectedCheckboxes.includes(option.id)}
+                        onCheckedChange={() => handleCheckboxChange(option.id, option.exclusive)}
+                      />
+                      <Label
+                        htmlFor={option.id}
+                        className="flex-1 cursor-pointer text-base"
+                      >
+                        {option.text}
+                      </Label>
+                    </div>
+                    {/* Show text field for "Anders" option when selected */}
+                    {option.hasTextField && selectedCheckboxes.includes(option.id) && (
+                      <div className="mt-2 ml-8">
+                        <Input
+                          placeholder="Beschrijf uw andere beperking..."
+                          value={andersText}
+                          onChange={(e) => setAndersText(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          className="w-full"
+                        />
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
