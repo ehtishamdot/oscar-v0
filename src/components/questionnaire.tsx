@@ -1,33 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import {
   ArrowLeft,
-  Home,
+  ArrowRight,
+  Check,
   AlertTriangle,
-  CheckCircle2,
-  Circle,
-  Stethoscope,
-  HeartPulse,
-  Activity,
-  Salad,
-  CigaretteOff,
-  ClipboardCheck,
+  Home,
+  Sparkles,
+  ThumbsUp,
+  ThumbsDown,
+  User,
+  Footprints,
+  Dumbbell,
+  PersonStanding,
+  Shirt,
+  HelpCircle,
+  Ban,
   Scale,
-  User
+  Utensils,
+  TrendingDown,
+  Battery,
+  Apple,
+  Cigarette,
+  CircleOff,
 } from 'lucide-react';
 import LocalServices from './local-services';
 import Link from 'next/link';
@@ -66,20 +66,18 @@ interface BaseQuestion {
   text: string;
   subtext?: string;
   type: QuestionType;
-  stepNumber: number;
-  totalSteps: number;
-  category: string;
+  questionNumber: number;
 }
 
 interface RadioQuestion extends BaseQuestion {
   type: 'radio';
-  options: { text: string; value: string }[];
+  options: { text: string; value: string; icon?: React.ElementType }[];
   next: (answer: string) => QuestionId;
 }
 
 interface CheckboxQuestion extends BaseQuestion {
   type: 'checkbox';
-  options: { id: string; text: string; exclusive?: boolean; hasTextField?: boolean }[];
+  options: { id: string; text: string; icon?: React.ElementType; exclusive?: boolean; hasTextField?: boolean }[];
   next: (selectedIds: string[]) => QuestionId;
 }
 
@@ -90,377 +88,386 @@ interface BMIQuestion extends BaseQuestion {
 
 type Question = RadioQuestion | CheckboxQuestion | BMIQuestion;
 
-const TOTAL_STEPS = 6;
-
-// Step information for visual progress
-const stepInfo = [
-  { number: 1, label: 'Intake', icon: ClipboardCheck, color: 'text-blue-500' },
-  { number: 2, label: 'Screening', icon: Stethoscope, color: 'text-green-500' },
-  { number: 3, label: 'Fysiotherapie', icon: HeartPulse, color: 'text-purple-500' },
-  { number: 4, label: 'Dagelijks leven', icon: Activity, color: 'text-orange-500' },
-  { number: 5, label: 'Leefstijl', icon: Scale, color: 'text-pink-500' },
-  { number: 6, label: 'Roken', icon: CigaretteOff, color: 'text-red-500' },
-];
+const TOTAL_QUESTIONS = 10;
 
 const questions: Record<string, Question> = {
   Q_COMPLAINT: {
     id: 'Q_COMPLAINT',
     text: 'Heeft u klachten aan uw heup of knie?',
     type: 'radio',
+    questionNumber: 1,
     options: [
-      { text: 'Ja', value: 'ja' },
-      { text: 'Nee', value: 'nee' },
+      { text: 'Ja', value: 'ja', icon: ThumbsUp },
+      { text: 'Nee', value: 'nee', icon: ThumbsDown },
     ],
     next: (answer) => (answer === 'ja' ? 'Q_DIAGNOSIS' : 'HARD_STOP_NO_COMPLAINT'),
-    stepNumber: 1,
-    totalSteps: TOTAL_STEPS,
-    category: 'Intake',
   },
   Q_DIAGNOSIS: {
     id: 'Q_DIAGNOSIS',
     text: 'Is de diagnose artrose bij u vastgesteld door een arts?',
     type: 'radio',
+    questionNumber: 2,
     options: [
-      { text: 'Ja', value: 'ja' },
-      { text: 'Nee', value: 'nee' },
+      { text: 'Ja', value: 'ja', icon: ThumbsUp },
+      { text: 'Nee', value: 'nee', icon: ThumbsDown },
     ],
     next: (answer) => (answer === 'ja' ? 'Q_RECENT_FYSIO' : 'Q_AGE'),
-    stepNumber: 1,
-    totalSteps: TOTAL_STEPS,
-    category: 'Intake',
   },
   Q_AGE: {
     id: 'Q_AGE',
     text: 'Bent u ouder dan 50 jaar?',
     type: 'radio',
+    questionNumber: 3,
     options: [
-      { text: 'Ja, 50 jaar of ouder', value: 'ja' },
-      { text: 'Nee, jonger dan 50', value: 'nee' },
+      { text: 'Ja, 50 jaar of ouder', value: 'ja', icon: ThumbsUp },
+      { text: 'Nee, jonger dan 50', value: 'nee', icon: User },
     ],
     next: (answer) => (answer === 'ja' ? 'Q_RED_FLAGS' : 'HARD_STOP_AGE'),
-    stepNumber: 2,
-    totalSteps: TOTAL_STEPS,
-    category: 'Screening',
   },
   Q_RED_FLAGS: {
     id: 'Q_RED_FLAGS',
     text: 'Heeft u last van één of meer van de volgende symptomen?',
     subtext: 'Plotselinge roodheid rond het gewricht, hoge koorts, of extreme acute pijn?',
     type: 'radio',
+    questionNumber: 4,
     options: [
-      { text: 'Ja', value: 'ja' },
-      { text: 'Nee', value: 'nee' },
+      { text: 'Ja', value: 'ja', icon: AlertTriangle },
+      { text: 'Nee', value: 'nee', icon: ThumbsDown },
     ],
     next: (answer) => (answer === 'ja' ? 'HARD_STOP_RED_FLAGS' : 'Q_RECENT_FYSIO'),
-    stepNumber: 2,
-    totalSteps: TOTAL_STEPS,
-    category: 'Screening',
   },
   Q_RECENT_FYSIO: {
     id: 'Q_RECENT_FYSIO',
     text: 'Heeft u recent fysiotherapie gehad voor deze klacht?',
     type: 'radio',
+    questionNumber: 5,
     options: [
-      { text: 'Ja', value: 'ja' },
-      { text: 'Nee', value: 'nee' },
+      { text: 'Ja', value: 'ja', icon: ThumbsUp },
+      { text: 'Nee', value: 'nee', icon: ThumbsDown },
     ],
     next: (answer) => (answer === 'ja' ? 'Q_NETWORK_FYSIO' : 'Q_ADL'),
-    stepNumber: 3,
-    totalSteps: TOTAL_STEPS,
-    category: 'Fysiotherapie',
   },
   Q_NETWORK_FYSIO: {
     id: 'Q_NETWORK_FYSIO',
     text: 'Wilt u een fysiotherapeut uit ons specifieke netwerk?',
     subtext: 'Onze netwerkpartners zijn gespecialiseerd in artrose behandeling.',
     type: 'radio',
+    questionNumber: 6,
     options: [
-      { text: 'Ja', value: 'ja' },
-      { text: 'Nee', value: 'nee' },
+      { text: 'Ja', value: 'ja', icon: ThumbsUp },
+      { text: 'Nee', value: 'nee', icon: ThumbsDown },
     ],
     next: () => 'Q_ADL',
-    stepNumber: 3,
-    totalSteps: TOTAL_STEPS,
-    category: 'Fysiotherapie',
   },
   Q_ADL: {
     id: 'Q_ADL',
     text: 'Ervaart u klachten of beperkingen bij het dagelijks functioneren?',
     subtext: 'Selecteer alle opties die van toepassing zijn',
     type: 'checkbox',
+    questionNumber: 7,
     options: [
-      { id: 'traplopen', text: 'Traplopen' },
-      { id: 'sporten', text: 'Sporten / Bewegen' },
-      { id: 'wandelen', text: 'Wandelen' },
-      { id: 'sokken', text: 'Sokken/schoenen aantrekken' },
-      { id: 'anders', text: 'Anders, namelijk...', hasTextField: true },
-      { id: 'geen', text: 'Nee, geen beperkingen', exclusive: true },
+      { id: 'traplopen', text: 'Traplopen', icon: Footprints },
+      { id: 'sporten', text: 'Sporten / Bewegen', icon: Dumbbell },
+      { id: 'wandelen', text: 'Wandelen', icon: PersonStanding },
+      { id: 'sokken', text: 'Sokken/schoenen aantrekken', icon: Shirt },
+      { id: 'anders', text: 'Anders, namelijk...', icon: HelpCircle, hasTextField: true },
+      { id: 'geen', text: 'Nee, geen beperkingen', icon: Ban, exclusive: true },
     ],
     next: () => 'Q_BMI_CALC',
-    stepNumber: 4,
-    totalSteps: TOTAL_STEPS,
-    category: 'Dagelijks leven',
   },
   Q_BMI_CALC: {
     id: 'Q_BMI_CALC',
     text: 'Wat is uw lengte en gewicht?',
     subtext: 'Dit helpt ons om passend leefstijladvies te geven.',
     type: 'bmi',
+    questionNumber: 8,
     next: (bmi) => (bmi > 25 ? 'Q_SMOKING' : 'Q_NUTRI_SCREEN'),
-    stepNumber: 5,
-    totalSteps: TOTAL_STEPS,
-    category: 'Leefstijl',
   },
   Q_NUTRI_SCREEN: {
     id: 'Q_NUTRI_SCREEN',
     text: 'Welke van de volgende stellingen zijn op u van toepassing?',
     subtext: 'Dit helpt ons uw voedingspatroon beter in te schatten',
     type: 'checkbox',
+    questionNumber: 9,
     options: [
-      { id: 'afgevallen', text: 'Ik ben de afgelopen 6 maanden onbedoeld afgevallen' },
-      { id: 'eetlust', text: 'Ik heb een verminderde eetlust' },
-      { id: 'energie', text: 'Ik ervaar een laag energieniveau of snelle vermoeidheid' },
-      { id: 'groente', text: 'Ik eet weinig groente/fruit (minder dan 200g per dag)' },
-      { id: 'geen', text: 'Geen van bovenstaande', exclusive: true },
+      { id: 'afgevallen', text: 'Ik ben de afgelopen 6 maanden onbedoeld afgevallen', icon: TrendingDown },
+      { id: 'eetlust', text: 'Ik heb een verminderde eetlust', icon: Utensils },
+      { id: 'energie', text: 'Ik ervaar een laag energieniveau of snelle vermoeidheid', icon: Battery },
+      { id: 'groente', text: 'Ik eet weinig groente/fruit (minder dan 200g per dag)', icon: Apple },
+      { id: 'geen', text: 'Geen van bovenstaande', icon: Ban, exclusive: true },
     ],
     next: () => 'Q_SMOKING',
-    stepNumber: 5,
-    totalSteps: TOTAL_STEPS,
-    category: 'Leefstijl',
   },
   Q_SMOKING: {
     id: 'Q_SMOKING',
     text: 'Rookt u?',
     type: 'radio',
+    questionNumber: 10,
     options: [
-      { text: 'Ja', value: 'ja' },
-      { text: 'Nee', value: 'nee' },
+      { text: 'Ja', value: 'ja', icon: Cigarette },
+      { text: 'Nee', value: 'nee', icon: CircleOff },
     ],
     next: () => 'END',
-    stepNumber: 6,
-    totalSteps: TOTAL_STEPS,
-    category: 'Roken',
   },
 };
 
-// Hard Stop Screens
-const HardStopNoComplaint = ({ onBack }: { onBack: () => void }) => (
-  <section className="w-full max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-    <Card className="shadow-xl border-2 border-yellow-400/50 bg-gradient-to-br from-yellow-50 to-orange-50">
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-full bg-yellow-100">
-            <AlertTriangle className="h-8 w-8 text-yellow-600" />
-          </div>
-          <CardTitle className="font-headline text-2xl md:text-3xl">
-            Deze tool is niet geschikt voor u
-          </CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-muted-foreground text-lg">
-          Helaas bieden wij momenteel alleen ondersteuning voor heup- of knieklachten via deze tool.
-        </p>
-        <p className="text-muted-foreground">
-          Als u andere klachten heeft, raden wij u aan contact op te nemen met uw huisarts voor passend advies.
-        </p>
-      </CardContent>
-    </Card>
-    <div className="mt-6 flex justify-between">
-      <Button variant="ghost" onClick={onBack} className="gap-2">
-        <ArrowLeft className="h-4 w-4" />
-        Vorige
-      </Button>
-      <Button asChild>
-        <Link href="/" className="gap-2">
-          <Home className="h-4 w-4" />
-          Terug naar home
-        </Link>
-      </Button>
-    </div>
-  </section>
-);
+// Circular Progress Ring Component
+const ProgressRing = ({ progress, size = 80, strokeWidth = 6 }: { progress: number; size?: number; strokeWidth?: number }) => {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const offset = circumference - (progress / 100) * circumference;
 
-const HardStopAge = ({ onBack }: { onBack: () => void }) => (
-  <section className="w-full max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-    <Card className="shadow-xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50">
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-full bg-blue-100">
-            <User className="h-8 w-8 text-blue-600" />
-          </div>
-          <CardTitle className="font-headline text-2xl md:text-3xl">
-            Advies: Raadpleeg uw huisarts
-          </CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-muted-foreground text-lg">
-          Gezien uw leeftijd (&lt;50) adviseren wij u contact op te nemen met uw huisarts voor nader onderzoek.
-        </p>
-        <p className="text-muted-foreground">
-          Artrose komt vaker voor bij mensen boven de 50 jaar. Bij jongere mensen kunnen gewrichtsklachten andere oorzaken hebben.
-        </p>
-        <div className="pt-4">
-          <LocalServices />
-        </div>
-      </CardContent>
-    </Card>
-    <div className="mt-6 flex justify-between">
-      <Button variant="ghost" onClick={onBack} className="gap-2">
-        <ArrowLeft className="h-4 w-4" />
-        Vorige
-      </Button>
-      <Button asChild>
-        <Link href="/" className="gap-2">
-          <Home className="h-4 w-4" />
-          Terug naar home
-        </Link>
-      </Button>
-    </div>
-  </section>
-);
-
-const HardStopRedFlags = ({ onBack }: { onBack: () => void }) => (
-  <section className="w-full max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-    <Card className="shadow-xl border-2 border-red-400/50 bg-gradient-to-br from-red-50 to-pink-50">
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-full bg-red-100 animate-pulse">
-            <AlertTriangle className="h-8 w-8 text-red-600" />
-          </div>
-          <CardTitle className="font-headline text-2xl md:text-3xl text-red-800">
-            Neem direct contact op met uw huisarts
-          </CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-muted-foreground text-lg">
-          Op basis van deze symptomen adviseren wij u <strong>direct</strong> contact op te nemen met uw huisarts.
-        </p>
-        <div className="bg-red-100 p-4 rounded-lg border border-red-200">
-          <p className="font-semibold text-red-800">
-            Bel uw huisarts vandaag nog, of de huisartsenpost buiten kantoortijden.
-          </p>
-        </div>
-      </CardContent>
-    </Card>
-    <div className="mt-6 flex justify-between">
-      <Button variant="ghost" onClick={onBack} className="gap-2">
-        <ArrowLeft className="h-4 w-4" />
-        Vorige
-      </Button>
-      <Button asChild>
-        <Link href="/" className="gap-2">
-          <Home className="h-4 w-4" />
-          Terug naar home
-        </Link>
-      </Button>
-    </div>
-  </section>
-);
-
-// Step Progress Component
-const StepProgress = ({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) => {
   return (
-    <div className="mb-8">
-      {/* Mobile: Simple progress */}
-      <div className="md:hidden">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-primary">
-            Stap {currentStep} van {totalSteps}
-          </span>
-          <span className="text-sm text-muted-foreground">
-            {stepInfo[currentStep - 1]?.label}
-          </span>
-        </div>
-        <Progress value={(currentStep / totalSteps) * 100} className="h-2" />
-      </div>
-
-      {/* Desktop: Visual step indicators */}
-      <div className="hidden md:block">
-        <div className="flex items-center justify-between mb-4">
-          {stepInfo.map((step, index) => {
-            const StepIcon = step.icon;
-            const isActive = step.number === currentStep;
-            const isCompleted = step.number < currentStep;
-
-            return (
-              <div key={step.number} className="flex flex-col items-center flex-1">
-                <div className="flex items-center w-full">
-                  {/* Connector line before */}
-                  {index > 0 && (
-                    <div
-                      className={`flex-1 h-1 transition-colors duration-300 ${
-                        isCompleted || isActive ? 'bg-primary' : 'bg-muted'
-                      }`}
-                    />
-                  )}
-
-                  {/* Step circle */}
-                  <div
-                    className={`relative flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300 ${
-                      isActive
-                        ? 'border-primary bg-primary text-primary-foreground scale-110 shadow-lg'
-                        : isCompleted
-                        ? 'border-primary bg-primary text-primary-foreground'
-                        : 'border-muted bg-background text-muted-foreground'
-                    }`}
-                  >
-                    {isCompleted ? (
-                      <CheckCircle2 className="h-6 w-6" />
-                    ) : (
-                      <StepIcon className="h-5 w-5" />
-                    )}
-                    {isActive && (
-                      <div className="absolute -inset-1 rounded-full border-2 border-primary/30 animate-pulse" />
-                    )}
-                  </div>
-
-                  {/* Connector line after */}
-                  {index < stepInfo.length - 1 && (
-                    <div
-                      className={`flex-1 h-1 transition-colors duration-300 ${
-                        isCompleted ? 'bg-primary' : 'bg-muted'
-                      }`}
-                    />
-                  )}
-                </div>
-
-                {/* Step label */}
-                <span
-                  className={`mt-2 text-xs font-medium transition-colors ${
-                    isActive ? 'text-primary' : isCompleted ? 'text-primary/70' : 'text-muted-foreground'
-                  }`}
-                >
-                  {step.label}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg className="transform -rotate-90" width={size} height={size}>
+        {/* Background circle */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+          className="text-muted/30"
+        />
+        {/* Progress circle */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          className="text-primary transition-all duration-500 ease-out"
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-lg font-bold text-primary">{Math.round(progress)}%</span>
       </div>
     </div>
   );
 };
 
-// Question Counter Component
-const QuestionCounter = ({ answered, total }: { answered: number; total: number }) => (
-  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-    <div className="flex items-center gap-1">
-      <CheckCircle2 className="h-4 w-4 text-green-500" />
-      <span>{answered} beantwoord</span>
+// Hard Stop Screens
+const HardStopNoComplaint = ({ onBack }: { onBack: () => void }) => (
+  <div className="min-h-[80vh] flex items-center justify-center px-4">
+    <div className="w-full max-w-lg animate-in fade-in zoom-in-95 duration-500">
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-yellow-100 mb-6">
+          <AlertTriangle className="h-12 w-12 text-yellow-600" />
+        </div>
+        <h1 className="text-3xl md:text-4xl font-bold font-headline mb-4">
+          Deze tool is niet geschikt voor u
+        </h1>
+        <p className="text-lg text-muted-foreground mb-2">
+          Helaas bieden wij momenteel alleen ondersteuning voor heup- of knieklachten via deze tool.
+        </p>
+        <p className="text-muted-foreground">
+          Als u andere klachten heeft, raden wij u aan contact op te nemen met uw huisarts voor passend advies.
+        </p>
+      </div>
+      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <Button variant="outline" onClick={onBack} className="gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Vorige
+        </Button>
+        <Button asChild>
+          <Link href="/" className="gap-2">
+            <Home className="h-4 w-4" />
+            Terug naar home
+          </Link>
+        </Button>
+      </div>
     </div>
-    <span>•</span>
-    <span>{total - answered} te gaan</span>
   </div>
 );
+
+const HardStopAge = ({ onBack }: { onBack: () => void }) => (
+  <div className="min-h-[80vh] flex items-center justify-center px-4">
+    <div className="w-full max-w-lg animate-in fade-in zoom-in-95 duration-500">
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-blue-100 mb-6">
+          <User className="h-12 w-12 text-blue-600" />
+        </div>
+        <h1 className="text-3xl md:text-4xl font-bold font-headline mb-4">
+          Advies: Raadpleeg uw huisarts
+        </h1>
+        <p className="text-lg text-muted-foreground mb-2">
+          Gezien uw leeftijd (&lt;50) adviseren wij u contact op te nemen met uw huisarts voor nader onderzoek.
+        </p>
+        <p className="text-muted-foreground mb-6">
+          Artrose komt vaker voor bij mensen boven de 50 jaar. Bij jongere mensen kunnen gewrichtsklachten andere oorzaken hebben.
+        </p>
+        <LocalServices />
+      </div>
+      <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
+        <Button variant="outline" onClick={onBack} className="gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Vorige
+        </Button>
+        <Button asChild>
+          <Link href="/" className="gap-2">
+            <Home className="h-4 w-4" />
+            Terug naar home
+          </Link>
+        </Button>
+      </div>
+    </div>
+  </div>
+);
+
+const HardStopRedFlags = ({ onBack }: { onBack: () => void }) => (
+  <div className="min-h-[80vh] flex items-center justify-center px-4">
+    <div className="w-full max-w-lg animate-in fade-in zoom-in-95 duration-500">
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-red-100 mb-6 animate-pulse">
+          <AlertTriangle className="h-12 w-12 text-red-600" />
+        </div>
+        <h1 className="text-3xl md:text-4xl font-bold font-headline mb-4 text-red-800">
+          Neem direct contact op met uw huisarts
+        </h1>
+        <p className="text-lg text-muted-foreground mb-4">
+          Op basis van deze symptomen adviseren wij u <strong>direct</strong> contact op te nemen met uw huisarts.
+        </p>
+        <div className="bg-red-100 p-6 rounded-2xl border border-red-200">
+          <p className="font-semibold text-red-800 text-lg">
+            Bel uw huisarts vandaag nog, of de huisartsenpost buiten kantoortijden.
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <Button variant="outline" onClick={onBack} className="gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Vorige
+        </Button>
+        <Button asChild>
+          <Link href="/" className="gap-2">
+            <Home className="h-4 w-4" />
+            Terug naar home
+          </Link>
+        </Button>
+      </div>
+    </div>
+  </div>
+);
+
+// Option Card Component for Radio buttons
+const OptionCard = ({
+  option,
+  isSelected,
+  onClick,
+}: {
+  option: { text: string; value: string; icon?: React.ElementType };
+  isSelected: boolean;
+  onClick: () => void;
+}) => {
+  const Icon = option.icon;
+  return (
+    <button
+      onClick={onClick}
+      className={`
+        group relative w-full p-6 rounded-2xl border-2 transition-all duration-300 transform
+        ${isSelected
+          ? 'border-primary bg-primary/10 scale-[1.02] shadow-lg shadow-primary/20'
+          : 'border-muted bg-card hover:border-primary/50 hover:shadow-md hover:scale-[1.01]'
+        }
+      `}
+    >
+      <div className="flex items-center gap-4">
+        {Icon && (
+          <div className={`
+            flex items-center justify-center w-14 h-14 rounded-xl transition-all duration-300
+            ${isSelected
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
+            }
+          `}>
+            <Icon className="h-7 w-7" />
+          </div>
+        )}
+        <span className={`text-xl font-medium flex-1 text-left ${isSelected ? 'text-primary' : ''}`}>
+          {option.text}
+        </span>
+        <div className={`
+          flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all duration-300
+          ${isSelected
+            ? 'border-primary bg-primary text-primary-foreground'
+            : 'border-muted-foreground/30 group-hover:border-primary/50'
+          }
+        `}>
+          {isSelected && <Check className="h-5 w-5" />}
+        </div>
+      </div>
+    </button>
+  );
+};
+
+// Checkbox Card Component
+const CheckboxCard = ({
+  option,
+  isSelected,
+  onClick,
+  children,
+}: {
+  option: { id: string; text: string; icon?: React.ElementType; exclusive?: boolean };
+  isSelected: boolean;
+  onClick: () => void;
+  children?: React.ReactNode;
+}) => {
+  const Icon = option.icon;
+  return (
+    <div>
+      <button
+        onClick={onClick}
+        className={`
+          group relative w-full p-5 rounded-2xl border-2 transition-all duration-300 transform text-left
+          ${isSelected
+            ? 'border-primary bg-primary/10 scale-[1.01] shadow-md shadow-primary/10'
+            : 'border-muted bg-card hover:border-primary/50 hover:shadow-sm'
+          }
+          ${option.exclusive ? 'mt-4 border-dashed' : ''}
+        `}
+      >
+        <div className="flex items-center gap-3">
+          <div className={`
+            flex items-center justify-center w-7 h-7 rounded-lg border-2 transition-all duration-300 flex-shrink-0
+            ${isSelected
+              ? 'border-primary bg-primary text-primary-foreground'
+              : 'border-muted-foreground/30 group-hover:border-primary/50'
+            }
+          `}>
+            {isSelected && <Check className="h-4 w-4" />}
+          </div>
+          {Icon && (
+            <div className={`
+              flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300 flex-shrink-0
+              ${isSelected
+                ? 'bg-primary/20 text-primary'
+                : 'bg-muted text-muted-foreground group-hover:text-primary'
+              }
+            `}>
+              <Icon className="h-5 w-5" />
+            </div>
+          )}
+          <span className={`text-base font-medium ${isSelected ? 'text-primary' : ''}`}>
+            {option.text}
+          </span>
+        </div>
+      </button>
+      {children}
+    </div>
+  );
+};
 
 const Questionnaire = () => {
   const router = useRouter();
   const [currentQuestionId, setCurrentQuestionId] = useState<QuestionId>('Q_COMPLAINT');
   const [answers, setAnswers] = useState<Record<string, string | string[] | number>>({});
   const [history, setHistory] = useState<QuestionId[]>([]);
+  const [selectedRadio, setSelectedRadio] = useState<string | null>(null);
 
   // BMI state
   const [height, setHeight] = useState<string>('');
@@ -473,35 +480,54 @@ const Questionnaire = () => {
   const [andersText, setAndersText] = useState<string>('');
 
   // Animation state
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('left');
 
-  const handleRadioAnswer = (answerValue: string) => {
-    const currentQuestion = questions[currentQuestionId] as RadioQuestion;
-    if (!currentQuestion) return;
+  // Calculate progress
+  const answeredCount = Object.keys(answers).filter(k => !k.includes('_anders_text') && !['height', 'weight'].includes(k)).length;
+  const progress = (answeredCount / TOTAL_QUESTIONS) * 100;
 
-    setIsTransitioning(true);
+  // Reset selected radio when question changes
+  useEffect(() => {
+    setSelectedRadio(null);
+  }, [currentQuestionId]);
 
-    const newAnswers = { ...answers, [currentQuestionId]: answerValue };
-    setAnswers(newAnswers);
-    setHistory([...history, currentQuestionId]);
-
-    const nextQuestionId = currentQuestion.next(answerValue);
-
+  const animateTransition = (direction: 'left' | 'right', callback: () => void) => {
+    setSlideDirection(direction);
+    setIsAnimating(true);
     setTimeout(() => {
-      if (nextQuestionId === 'END') {
-        navigateToResults(newAnswers);
-      } else {
-        setCurrentQuestionId(nextQuestionId);
-      }
-      setIsTransitioning(false);
-    }, 200);
+      callback();
+      setIsAnimating(false);
+    }, 300);
+  };
+
+  const handleRadioSelect = (answerValue: string) => {
+    setSelectedRadio(answerValue);
+
+    // Auto-advance after selection with delay for visual feedback
+    setTimeout(() => {
+      const currentQuestion = questions[currentQuestionId] as RadioQuestion;
+      if (!currentQuestion) return;
+
+      const newAnswers = { ...answers, [currentQuestionId]: answerValue };
+      setAnswers(newAnswers);
+      setHistory([...history, currentQuestionId]);
+
+      const nextQuestionId = currentQuestion.next(answerValue);
+
+      animateTransition('left', () => {
+        if (nextQuestionId === 'END') {
+          navigateToResults(newAnswers);
+        } else {
+          setCurrentQuestionId(nextQuestionId);
+        }
+      });
+    }, 400);
   };
 
   const handleCheckboxSubmit = () => {
     const currentQuestion = questions[currentQuestionId] as CheckboxQuestion;
     if (!currentQuestion) return;
-
-    setIsTransitioning(true);
 
     const newAnswers: Record<string, string | string[] | number> = {
       ...answers,
@@ -515,17 +541,16 @@ const Questionnaire = () => {
     setHistory([...history, currentQuestionId]);
 
     const nextQuestionId = currentQuestion.next(selectedCheckboxes);
-    setSelectedCheckboxes([]);
-    setAndersText('');
 
-    setTimeout(() => {
+    animateTransition('left', () => {
+      setSelectedCheckboxes([]);
+      setAndersText('');
       if (nextQuestionId === 'END') {
         navigateToResults(newAnswers);
       } else {
         setCurrentQuestionId(nextQuestionId);
       }
-      setIsTransitioning(false);
-    }, 200);
+    });
   };
 
   const handleCheckboxChange = (optionId: string, exclusive?: boolean) => {
@@ -554,8 +579,6 @@ const Questionnaire = () => {
 
     if (!heightNum || !weightNum || heightNum <= 0 || weightNum <= 0) return;
 
-    setIsTransitioning(true);
-
     const heightInMeters = heightNum / 100;
     const bmi = weightNum / (heightInMeters * heightInMeters);
 
@@ -566,14 +589,13 @@ const Questionnaire = () => {
 
     const nextQuestionId = currentQuestion.next(bmi);
 
-    setTimeout(() => {
+    animateTransition('left', () => {
       if (nextQuestionId === 'END') {
         navigateToResults(newAnswers);
       } else {
         setCurrentQuestionId(nextQuestionId);
       }
-      setIsTransitioning(false);
-    }, 200);
+    });
   };
 
   const navigateToResults = (finalAnswers: Record<string, string | string[] | number>) => {
@@ -628,8 +650,7 @@ const Questionnaire = () => {
   const handleBack = () => {
     const previousQuestionId = history[history.length - 1];
     if (previousQuestionId) {
-      setIsTransitioning(true);
-      setTimeout(() => {
+      animateTransition('right', () => {
         setHistory(history.slice(0, -1));
         const newAnswers = { ...answers };
         delete newAnswers[currentQuestionId];
@@ -638,8 +659,7 @@ const Questionnaire = () => {
         setSelectedCheckboxes([]);
         setHeight('');
         setWeight('');
-        setIsTransitioning(false);
-      }, 150);
+      });
     } else {
       router.back();
     }
@@ -661,194 +681,205 @@ const Questionnaire = () => {
   const currentQuestion = questions[currentQuestionId];
   if (!currentQuestion) return null;
 
-  const answeredCount = Object.keys(answers).filter(k => !k.includes('_anders_text') && !['height', 'weight'].includes(k)).length;
-
   // Get BMI value for display
   const getBMICategory = (bmi: number) => {
-    if (bmi < 18.5) return { label: 'Ondergewicht', color: 'text-blue-600' };
-    if (bmi < 25) return { label: 'Gezond gewicht', color: 'text-green-600' };
-    if (bmi < 30) return { label: 'Overgewicht', color: 'text-orange-600' };
-    return { label: 'Obesitas', color: 'text-red-600' };
+    if (bmi < 18.5) return { label: 'Ondergewicht', color: 'text-blue-600', bg: 'bg-blue-100' };
+    if (bmi < 25) return { label: 'Gezond gewicht', color: 'text-green-600', bg: 'bg-green-100' };
+    if (bmi < 30) return { label: 'Overgewicht', color: 'text-orange-600', bg: 'bg-orange-100' };
+    return { label: 'Obesitas', color: 'text-red-600', bg: 'bg-red-100' };
   };
 
+  const calculatedBMI = height && weight && parseFloat(height) > 0 && parseFloat(weight) > 0
+    ? parseFloat(weight) / Math.pow(parseFloat(height) / 100, 2)
+    : null;
+
   return (
-    <section className="w-full max-w-2xl mx-auto">
-      {/* Step Progress */}
-      <StepProgress currentStep={currentQuestion.stepNumber} totalSteps={currentQuestion.totalSteps} />
+    <div className="min-h-[80vh] flex flex-col">
+      {/* Header with Progress */}
+      <div className="flex items-center justify-between mb-8 px-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleBack}
+          className="gap-2 text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span className="hidden sm:inline">Vorige</span>
+        </Button>
 
-      {/* Question Counter */}
-      <QuestionCounter answered={answeredCount} total={10} />
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <span>Vraag {currentQuestion.questionNumber} van {TOTAL_QUESTIONS}</span>
+          </div>
+          <ProgressRing progress={progress} size={60} strokeWidth={5} />
+        </div>
+      </div>
 
-      {/* Question Card */}
-      <div
-        className={`transition-all duration-200 ${
-          isTransitioning ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'
-        }`}
-      >
-        <Card className="shadow-xl border-0 bg-gradient-to-br from-card to-card/80">
-          <CardHeader className="pb-4">
-            {/* Category Badge */}
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary">
-                {currentQuestion.category}
-              </span>
+      {/* Question Content */}
+      <div className="flex-1 flex items-center justify-center">
+        <div
+          className={`
+            w-full max-w-xl px-4 transition-all duration-300 ease-out
+            ${isAnimating
+              ? slideDirection === 'left'
+                ? 'opacity-0 -translate-x-8'
+                : 'opacity-0 translate-x-8'
+              : 'opacity-100 translate-x-0'
+            }
+          `}
+        >
+          {/* Question Text */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+              <span>Vraag {currentQuestion.questionNumber}</span>
             </div>
-
-            <CardTitle className="font-headline text-2xl md:text-3xl leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold font-headline mb-3 leading-tight">
               {currentQuestion.text}
-            </CardTitle>
+            </h1>
             {currentQuestion.subtext && (
-              <CardDescription className="pt-2 text-base">
+              <p className="text-lg text-muted-foreground">
                 {currentQuestion.subtext}
-              </CardDescription>
+              </p>
             )}
-          </CardHeader>
+          </div>
 
-          <CardContent className="pt-2">
-            {/* Radio Options */}
-            {currentQuestion.type === 'radio' && (
-              <div className="grid gap-3">
-                {(currentQuestion as RadioQuestion).options.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => handleRadioAnswer(option.value)}
-                    className="w-full p-4 text-left rounded-xl border-2 border-muted bg-background hover:border-primary hover:bg-primary/5 transition-all duration-200 group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full border-2 border-muted-foreground/30 group-hover:border-primary flex items-center justify-center transition-colors">
-                        <div className="w-2.5 h-2.5 rounded-full bg-transparent group-hover:bg-primary/30 transition-colors" />
-                      </div>
-                      <span className="text-lg font-medium">{option.text}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
+          {/* Radio Options */}
+          {currentQuestion.type === 'radio' && (
+            <div className="space-y-4">
+              {(currentQuestion as RadioQuestion).options.map((option) => (
+                <OptionCard
+                  key={option.value}
+                  option={option}
+                  isSelected={selectedRadio === option.value}
+                  onClick={() => handleRadioSelect(option.value)}
+                />
+              ))}
+            </div>
+          )}
 
-            {/* Checkbox Options */}
-            {currentQuestion.type === 'checkbox' && (
-              <div className="space-y-4">
-                <div className="grid gap-2">
-                  {(currentQuestion as CheckboxQuestion).options.map((option) => (
-                    <div key={option.id}>
-                      <button
-                        onClick={() => handleCheckboxChange(option.id, option.exclusive)}
-                        className={`w-full p-4 text-left rounded-xl border-2 transition-all duration-200 ${
-                          selectedCheckboxes.includes(option.id)
-                            ? 'border-primary bg-primary/10'
-                            : 'border-muted bg-background hover:border-primary/50 hover:bg-muted/50'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <Checkbox
-                            checked={selectedCheckboxes.includes(option.id)}
-                            onCheckedChange={() => handleCheckboxChange(option.id, option.exclusive)}
-                            className="h-5 w-5"
-                          />
-                          <span className="text-base">{option.text}</span>
-                        </div>
-                      </button>
-                      {option.hasTextField && selectedCheckboxes.includes(option.id) && (
-                        <div className="mt-2 ml-4">
-                          <Input
-                            placeholder="Beschrijf uw andere beperking..."
-                            value={andersText}
-                            onChange={(e) => setAndersText(e.target.value)}
-                            onClick={(e) => e.stopPropagation()}
-                            className="w-full"
-                            autoFocus
-                          />
-                        </div>
-                      )}
+          {/* Checkbox Options */}
+          {currentQuestion.type === 'checkbox' && (
+            <div className="space-y-3">
+              {(currentQuestion as CheckboxQuestion).options.map((option) => (
+                <CheckboxCard
+                  key={option.id}
+                  option={option}
+                  isSelected={selectedCheckboxes.includes(option.id)}
+                  onClick={() => handleCheckboxChange(option.id, option.exclusive)}
+                >
+                  {option.hasTextField && selectedCheckboxes.includes(option.id) && (
+                    <div className="mt-3 ml-10">
+                      <Input
+                        placeholder="Beschrijf uw andere beperking..."
+                        value={andersText}
+                        onChange={(e) => setAndersText(e.target.value)}
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-full"
+                        autoFocus
+                      />
                     </div>
-                  ))}
-                </div>
+                  )}
+                </CheckboxCard>
+              ))}
+              <div className="pt-4">
                 <Button
                   onClick={handleCheckboxSubmit}
-                  className="w-full h-12 text-base"
+                  className="w-full h-14 text-lg gap-2"
                   size="lg"
                   disabled={selectedCheckboxes.length === 0}
                 >
                   Volgende
+                  <ArrowRight className="h-5 w-5" />
                 </Button>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* BMI Input */}
-            {currentQuestion.type === 'bmi' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="height" className="text-base font-medium">
-                      Lengte (cm)
-                    </Label>
+          {/* BMI Input */}
+          {currentQuestion.type === 'bmi' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="height" className="text-base font-medium flex items-center gap-2">
+                    <Scale className="h-4 w-4 text-muted-foreground" />
+                    Lengte
+                  </Label>
+                  <div className="relative">
                     <Input
                       id="height"
                       type="number"
-                      placeholder="bijv. 175"
+                      placeholder="175"
                       value={height}
                       onChange={(e) => setHeight(e.target.value)}
-                      className="text-lg h-14 text-center"
+                      className="text-2xl h-16 text-center font-semibold pr-12"
                       min="100"
                       max="250"
                     />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
+                      cm
+                    </span>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="weight" className="text-base font-medium">
-                      Gewicht (kg)
-                    </Label>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="weight" className="text-base font-medium flex items-center gap-2">
+                    <Scale className="h-4 w-4 text-muted-foreground" />
+                    Gewicht
+                  </Label>
+                  <div className="relative">
                     <Input
                       id="weight"
                       type="number"
-                      placeholder="bijv. 75"
+                      placeholder="75"
                       value={weight}
                       onChange={(e) => setWeight(e.target.value)}
-                      className="text-lg h-14 text-center"
+                      className="text-2xl h-16 text-center font-semibold pr-12"
                       min="30"
                       max="300"
                     />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
+                      kg
+                    </span>
                   </div>
                 </div>
-
-                {/* BMI Display */}
-                {height && weight && parseFloat(height) > 0 && parseFloat(weight) > 0 && (
-                  <div className="p-4 rounded-xl bg-muted/50 border">
-                    <div className="text-center">
-                      <p className="text-sm text-muted-foreground mb-1">Uw BMI</p>
-                      <p className="text-4xl font-bold text-primary">
-                        {(parseFloat(weight) / Math.pow(parseFloat(height) / 100, 2)).toFixed(1)}
-                      </p>
-                      <p className={`text-sm font-medium mt-1 ${
-                        getBMICategory(parseFloat(weight) / Math.pow(parseFloat(height) / 100, 2)).color
-                      }`}>
-                        {getBMICategory(parseFloat(weight) / Math.pow(parseFloat(height) / 100, 2)).label}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <Button
-                  onClick={handleBMISubmit}
-                  className="w-full h-12 text-base"
-                  size="lg"
-                  disabled={!height || !weight || parseFloat(height) <= 0 || parseFloat(weight) <= 0}
-                >
-                  Volgende
-                </Button>
               </div>
-            )}
-          </CardContent>
-        </Card>
+
+              {/* BMI Display */}
+              {calculatedBMI && (
+                <div className={`p-6 rounded-2xl border-2 transition-all duration-500 ${getBMICategory(calculatedBMI).bg} border-transparent`}>
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground mb-2">Uw BMI</p>
+                    <p className={`text-5xl font-bold ${getBMICategory(calculatedBMI).color}`}>
+                      {calculatedBMI.toFixed(1)}
+                    </p>
+                    <p className={`text-lg font-semibold mt-2 ${getBMICategory(calculatedBMI).color}`}>
+                      {getBMICategory(calculatedBMI).label}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <Button
+                onClick={handleBMISubmit}
+                className="w-full h-14 text-lg gap-2"
+                size="lg"
+                disabled={!calculatedBMI}
+              >
+                Volgende
+                <ArrowRight className="h-5 w-5" />
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Back Button */}
-      <div className="mt-6">
-        <Button variant="ghost" onClick={handleBack} className="gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          Vorige vraag
-        </Button>
+      {/* Mobile Question Counter */}
+      <div className="sm:hidden text-center py-4">
+        <p className="text-sm text-muted-foreground">
+          Vraag {currentQuestion.questionNumber} van {TOTAL_QUESTIONS}
+        </p>
       </div>
-    </section>
+    </div>
   );
 };
 
