@@ -13,7 +13,6 @@ const Header = () => {
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '/about', label: 'Over Artrose' },
     { href: '/questionnaire', label: 'Vragenlijst' },
   ];
 

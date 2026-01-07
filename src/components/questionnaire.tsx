@@ -14,7 +14,8 @@ import {
   Sparkles,
   ThumbsUp,
   ThumbsDown,
-  User,
+  UserRound,
+  UserRoundCheck,
   Footprints,
   Dumbbell,
   PersonStanding,
@@ -22,14 +23,20 @@ import {
   HelpCircle,
   Ban,
   Scale,
-  Utensils,
-  TrendingDown,
-  Battery,
   Apple,
   Cigarette,
   CircleOff,
+  Bike,
+  ShoppingBag,
+  House,
+  Salad,
+  Wine,
+  Battery,
+  Info,
+  Utensils,
+  Heart,
+  X,
 } from 'lucide-react';
-import LocalServices from './local-services';
 import Link from 'next/link';
 
 // Care needs / advice flags
@@ -119,20 +126,20 @@ const questions: Record<string, Question> = {
     type: 'radio',
     questionNumber: 3,
     options: [
-      { text: 'Ja, 50 jaar of ouder', value: 'ja', icon: ThumbsUp },
-      { text: 'Nee, jonger dan 50', value: 'nee', icon: User },
+      { text: 'Ja, 50 jaar of ouder', value: 'ja', icon: UserRoundCheck },
+      { text: 'Nee, jonger dan 50', value: 'nee', icon: UserRound },
     ],
     next: (answer) => (answer === 'ja' ? 'Q_RED_FLAGS' : 'HARD_STOP_AGE'),
   },
   Q_RED_FLAGS: {
     id: 'Q_RED_FLAGS',
     text: 'Heeft u last van één of meer van de volgende symptomen?',
-    subtext: 'Plotselinge roodheid rond het gewricht, hoge koorts, of extreme acute pijn?',
+    subtext: '• Plotselinge roodheid rond het gewricht\n• Hoge koorts\n• Extreme acute pijn',
     type: 'radio',
     questionNumber: 4,
     options: [
-      { text: 'Ja', value: 'ja', icon: AlertTriangle },
-      { text: 'Nee', value: 'nee', icon: ThumbsDown },
+      { text: 'Ja, ik heb een of meer van deze symptomen', value: 'ja', icon: AlertTriangle },
+      { text: 'Nee, geen van deze symptomen', value: 'nee', icon: Check },
     ],
     next: (answer) => (answer === 'ja' ? 'HARD_STOP_RED_FLAGS' : 'Q_RECENT_FYSIO'),
   },
@@ -149,26 +156,29 @@ const questions: Record<string, Question> = {
   },
   Q_NETWORK_FYSIO: {
     id: 'Q_NETWORK_FYSIO',
-    text: 'Wilt u een fysiotherapeut uit ons specifieke netwerk?',
-    subtext: 'Onze netwerkpartners zijn gespecialiseerd in artrose behandeling.',
+    text: 'Wilt u begeleiding van een gespecialiseerde fysiotherapeut?',
+    subtext: 'Onze fysiotherapeuten richten zich specifiek op heup- en knieklachten. We bespreken graag online met u wat de mogelijkheden zijn. Daarna helpen we u aan een passende therapeut bij u in de buurt.',
     type: 'radio',
     questionNumber: 6,
     options: [
-      { text: 'Ja', value: 'ja', icon: ThumbsUp },
-      { text: 'Nee', value: 'nee', icon: ThumbsDown },
+      { text: 'Ja, graag', value: 'ja', icon: ThumbsUp },
+      { text: 'Nee, bedankt', value: 'nee', icon: ThumbsDown },
     ],
     next: () => 'Q_ADL',
   },
   Q_ADL: {
     id: 'Q_ADL',
     text: 'Ervaart u klachten of beperkingen bij het dagelijks functioneren?',
-    subtext: 'Selecteer alle opties die van toepassing zijn',
+    subtext: 'Selecteer momenten waarbij u klachten heeft.',
     type: 'checkbox',
     questionNumber: 7,
     options: [
       { id: 'traplopen', text: 'Traplopen', icon: Footprints },
-      { id: 'sporten', text: 'Sporten / Bewegen', icon: Dumbbell },
       { id: 'wandelen', text: 'Wandelen', icon: PersonStanding },
+      { id: 'fietsen', text: 'Fietsen', icon: Bike },
+      { id: 'sporten', text: 'Sporten', icon: Dumbbell },
+      { id: 'huishouden', text: 'Huishouden', icon: House },
+      { id: 'boodschappen', text: 'Boodschappen doen', icon: ShoppingBag },
       { id: 'sokken', text: 'Sokken/schoenen aantrekken', icon: Shirt },
       { id: 'anders', text: 'Anders, namelijk...', icon: HelpCircle, hasTextField: true },
       { id: 'geen', text: 'Nee, geen beperkingen', icon: Ban, exclusive: true },
@@ -186,14 +196,16 @@ const questions: Record<string, Question> = {
   Q_NUTRI_SCREEN: {
     id: 'Q_NUTRI_SCREEN',
     text: 'Welke van de volgende stellingen zijn op u van toepassing?',
-    subtext: 'Dit helpt ons uw voedingspatroon beter in te schatten',
+    subtext: 'Selecteer alle opties die van toepassing zijn.',
     type: 'checkbox',
     questionNumber: 9,
     options: [
-      { id: 'afgevallen', text: 'Ik ben de afgelopen 6 maanden onbedoeld afgevallen', icon: TrendingDown },
+      { id: 'groente', text: 'Ik eet weinig groente of fruit', icon: Salad },
+      { id: 'gewicht', text: 'Ik ben niet tevreden met mijn gewicht', icon: Scale },
+      { id: 'alcohol', text: 'Ik drink teveel alcohol', icon: Wine },
+      { id: 'energie', text: 'Ik heb weinig energie of ben snel moe', icon: Battery },
+      { id: 'voeding_info', text: 'Ik wil informatie over gezondere voeding', icon: Info },
       { id: 'eetlust', text: 'Ik heb een verminderde eetlust', icon: Utensils },
-      { id: 'energie', text: 'Ik ervaar een laag energieniveau of snelle vermoeidheid', icon: Battery },
-      { id: 'groente', text: 'Ik eet weinig groente/fruit (minder dan 200g per dag)', icon: Apple },
       { id: 'geen', text: 'Geen van bovenstaande', icon: Ban, exclusive: true },
     ],
     next: () => 'Q_SMOKING',
@@ -220,7 +232,6 @@ const ProgressRing = ({ progress, size = 80, strokeWidth = 6 }: { progress: numb
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg className="transform -rotate-90" width={size} height={size}>
-        {/* Background circle */}
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -230,7 +241,6 @@ const ProgressRing = ({ progress, size = 80, strokeWidth = 6 }: { progress: numb
           strokeWidth={strokeWidth}
           className="text-muted/30"
         />
-        {/* Progress circle */}
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -251,22 +261,20 @@ const ProgressRing = ({ progress, size = 80, strokeWidth = 6 }: { progress: numb
   );
 };
 
-// Hard Stop Screens
+// Hard Stop Screens - Updated per feedback
 const HardStopNoComplaint = ({ onBack }: { onBack: () => void }) => (
   <div className="min-h-[80vh] flex items-center justify-center px-4">
     <div className="w-full max-w-lg animate-in fade-in zoom-in-95 duration-500">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-yellow-100 mb-6">
-          <AlertTriangle className="h-12 w-12 text-yellow-600" />
+        <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-orange-100 mb-6">
+          <Heart className="h-12 w-12 text-orange-600" />
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold font-headline mb-4">
-          Deze tool is niet geschikt voor u
+        <h1 className="text-2xl md:text-3xl font-bold font-headline mb-4">
+          Voor uw klachten is een andere route beter
         </h1>
-        <p className="text-lg text-muted-foreground mb-2">
-          Helaas bieden wij momenteel alleen ondersteuning voor heup- of knieklachten via deze tool.
-        </p>
-        <p className="text-muted-foreground">
-          Als u andere klachten heeft, raden wij u aan contact op te nemen met uw huisarts voor passend advies.
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          Wij willen u graag de allerbeste hulp bieden. Onze huidige programma's zijn echter specifiek
+          gemaakt voor mensen met heup- en knieklachten. Wij kunnen u momenteel niet goed helpen.
         </p>
       </div>
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -290,20 +298,18 @@ const HardStopAge = ({ onBack }: { onBack: () => void }) => (
     <div className="w-full max-w-lg animate-in fade-in zoom-in-95 duration-500">
       <div className="text-center mb-8">
         <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-blue-100 mb-6">
-          <User className="h-12 w-12 text-blue-600" />
+          <UserRound className="h-12 w-12 text-blue-600" />
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold font-headline mb-4">
-          Advies: Raadpleeg uw huisarts
+        <h1 className="text-2xl md:text-3xl font-bold font-headline mb-4">
+          Voor uw klachten is een andere route beter
         </h1>
-        <p className="text-lg text-muted-foreground mb-2">
-          Gezien uw leeftijd (&lt;50) adviseren wij u contact op te nemen met uw huisarts voor nader onderzoek.
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          Wij willen u graag de allerbeste hulp bieden. Onze huidige programma's zijn echter specifiek
+          gemaakt voor mensen met heup- en knieklachten boven de 50 jaar. Wij raden u aan contact op te
+          nemen met uw huisarts voor passend advies.
         </p>
-        <p className="text-muted-foreground mb-6">
-          Artrose komt vaker voor bij mensen boven de 50 jaar. Bij jongere mensen kunnen gewrichtsklachten andere oorzaken hebben.
-        </p>
-        <LocalServices />
       </div>
-      <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
+      <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Button variant="outline" onClick={onBack} className="gap-2">
           <ArrowLeft className="h-4 w-4" />
           Vorige
@@ -323,20 +329,15 @@ const HardStopRedFlags = ({ onBack }: { onBack: () => void }) => (
   <div className="min-h-[80vh] flex items-center justify-center px-4">
     <div className="w-full max-w-lg animate-in fade-in zoom-in-95 duration-500">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-red-100 mb-6 animate-pulse">
-          <AlertTriangle className="h-12 w-12 text-red-600" />
+        <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-amber-100 mb-6">
+          <AlertTriangle className="h-12 w-12 text-amber-600" />
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold font-headline mb-4 text-red-800">
-          Neem direct contact op met uw huisarts
+        <h1 className="text-2xl md:text-3xl font-bold font-headline mb-4">
+          Uw symptomen kunnen wijzen op een situatie die medische aandacht vraagt.
         </h1>
-        <p className="text-lg text-muted-foreground mb-4">
-          Op basis van deze symptomen adviseren wij u <strong>direct</strong> contact op te nemen met uw huisarts.
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          Onze programma's zijn hier niet op ingericht. Neem daarom geen risico en bespreek dit met uw huisarts.
         </p>
-        <div className="bg-red-100 p-6 rounded-2xl border border-red-200">
-          <p className="font-semibold text-red-800 text-lg">
-            Bel uw huisarts vandaag nog, of de huisartsenpost buiten kantoortijden.
-          </p>
-        </div>
       </div>
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Button variant="outline" onClick={onBack} className="gap-2">
@@ -504,7 +505,6 @@ const Questionnaire = () => {
   const handleRadioSelect = (answerValue: string) => {
     setSelectedRadio(answerValue);
 
-    // Auto-advance after selection with delay for visual feedback
     setTimeout(() => {
       const currentQuestion = questions[currentQuestionId] as RadioQuestion;
       if (!currentQuestion) return;
@@ -626,6 +626,7 @@ const Questionnaire = () => {
       careNeeds.diet = true;
     }
 
+    // Updated logic: any nutrition option (except 'geen') triggers diet pathway
     const nutriAnswers = finalAnswers.Q_NUTRI_SCREEN as string[] | undefined;
     if (nutriAnswers && nutriAnswers.length > 0 && !nutriAnswers.includes('geen')) {
       careNeeds.diet = true;
@@ -693,6 +694,30 @@ const Questionnaire = () => {
     ? parseFloat(weight) / Math.pow(parseFloat(height) / 100, 2)
     : null;
 
+  // Format subtext with bullet points
+  const formatSubtext = (text: string) => {
+    if (text.includes('•')) {
+      const lines = text.split('\n');
+      return (
+        <ul className="text-left inline-block text-lg text-muted-foreground space-y-1">
+          {lines.map((line, i) => (
+            <li key={i} className="flex items-start gap-2">
+              {line.startsWith('•') ? (
+                <>
+                  <span className="text-primary mt-1">•</span>
+                  <span>{line.substring(1).trim()}</span>
+                </>
+              ) : (
+                <span>{line}</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      );
+    }
+    return <p className="text-lg text-muted-foreground">{text}</p>;
+  };
+
   return (
     <div className="min-h-[80vh] flex flex-col">
       {/* Header with Progress */}
@@ -738,9 +763,9 @@ const Questionnaire = () => {
               {currentQuestion.text}
             </h1>
             {currentQuestion.subtext && (
-              <p className="text-lg text-muted-foreground">
-                {currentQuestion.subtext}
-              </p>
+              <div className="mt-4">
+                {formatSubtext(currentQuestion.subtext)}
+              </div>
             )}
           </div>
 

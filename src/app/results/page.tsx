@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import Header from '@/components/header';
 import {
   Stethoscope,
@@ -10,24 +10,19 @@ import {
   ShieldCheck,
   Activity,
   HeartPulse,
-  CheckCircle2,
   ArrowRight,
-  Info
+  Euro
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 
 interface PathwayOption {
   id: string;
   title: string;
   description: string;
   icon: React.ReactNode;
-  type: 'online' | 'hybrid';
-  typeLabel: string;
 }
 
 function ResultsContent() {
@@ -43,67 +38,62 @@ function ResultsContent() {
         smoking: searchParams.get('smoking') === 'true',
     };
 
-    const [selectedPathways, setSelectedPathways] = useState<string[]>([]);
-    const [step, setStep] = useState<'results' | 'consent'>('results');
-
     const availablePathways: PathwayOption[] = [];
 
     if (careNeeds.physio || careNeeds.physioNetwork) {
         availablePathways.push({
             id: 'fysio',
-            title: 'Fysiotherapie',
-            description: 'Een fysiotherapeut helpt u met oefeningen en behandelingen om uw gewrichtsklachten te verminderen. Na een online intake wordt u gekoppeld aan een fysiotherapeut bij u in de buurt.',
+            title: 'Fysiotherapie: Pijn verminderen & Soepel bewegen',
+            description: 'Een gespecialiseerde fysiotherapeut kijkt eerst online met u mee. Samen maakt u een duidelijk plan om uw klachten aan te pakken. Zodra dit plan er is, zoeken wij direct een fysiotherapeut bij u in de buurt die snel plek heeft. Zo kunt u meteen aan de slag.',
             icon: <HeartPulse className="h-8 w-8 text-blue-500" />,
-            type: 'hybrid',
-            typeLabel: 'Online intake + behandeling bij u in de buurt',
         });
     }
 
     if (careNeeds.ergo) {
         availablePathways.push({
             id: 'ergo',
-            title: 'Ergotherapie',
-            description: 'Een ergotherapeut helpt u met praktische oplossingen voor dagelijkse activiteiten. Na een online intake wordt u gekoppeld aan een ergotherapeut bij u in de buurt.',
+            title: 'Ergotherapie: Makkelijker dagelijks leven',
+            description: 'Praktische oplossingen voor thuis en werk. Heeft u moeite met dagelijkse dingen, zoals werk, huishouden of hobby\'s? De ergotherapeut leert u slimme manieren om dit makkelijker te doen. U leert hoe u uw activiteiten zo aanpakt dat u minder last heeft van uw klachten. We starten online en regelen daarna hulp bij u in de buurt.',
             icon: <Stethoscope className="h-8 w-8 text-green-500" />,
-            type: 'hybrid',
-            typeLabel: 'Online intake + behandeling bij u in de buurt',
         });
     }
 
     if (careNeeds.diet) {
         availablePathways.push({
             id: 'diet',
-            title: 'Diëtist',
-            description: 'Een diëtist helpt u met een persoonlijk voedingsplan om ontstekingen te verminderen en een gezond gewicht te bereiken. De volledige begeleiding vindt online plaats.',
+            title: 'Voedingsbegeleiding: Afvallen & Herstellen',
+            description: 'Wist u dat voeding veel invloed heeft op uw klachten? De diëtist helpt u niet alleen met gezond afvallen, maar zorgt ook voor voeding die uw herstel versnelt en ontstekingen remt. U krijgt een makkelijk plan dat bij u past. Gewoon vanuit huis te volgen.',
             icon: <Salad className="h-8 w-8 text-orange-500" />,
-            type: 'online',
-            typeLabel: 'Volledig online behandeling',
-        });
-    }
-
-    if (careNeeds.smoking) {
-        availablePathways.push({
-            id: 'smoking',
-            title: 'Stoppen met Roken',
-            description: 'Professionele begeleiding om te stoppen met roken. Dit heeft een direct positief effect op uw herstel. De volledige begeleiding vindt online plaats.',
-            icon: <CigaretteOff className="h-8 w-8 text-red-500" />,
-            type: 'online',
-            typeLabel: 'Volledig online behandeling',
         });
     }
 
     if (careNeeds.gli) {
         availablePathways.push({
             id: 'gli',
-            title: 'GLI Programma',
-            description: 'Het Gecombineerde Leefstijl Interventie programma helpt u met het aanpassen van uw leefstijl door middel van begeleide beweging en voedingsadvies. De volledige begeleiding vindt online plaats.',
+            title: 'GLI Programma: Fitter worden & Blijven',
+            description: 'Wilt u lekkerder in uw vel zitten? Uw coach helpt u met bewegen en eten op een manier die u wél volhoudt. Geen streng dieet, maar stapsgewijs werken aan een gezond gewicht en meer energie. Volledig online begeleid.',
             icon: <Activity className="h-8 w-8 text-purple-500" />,
-            type: 'online',
-            typeLabel: 'Volledig online behandeling',
+        });
+    }
+
+    if (careNeeds.smoking) {
+        availablePathways.push({
+            id: 'smoking',
+            title: 'Rookvrij: Geef uw herstel een boost',
+            description: 'Stoppen met roken zorgt direct voor een betere doorbloeding, waardoor uw lichaam sneller geneest. Met onze online aanpak staat u er niet alleen voor en is de kans dat het lukt veel groter.',
+            icon: <CigaretteOff className="h-8 w-8 text-red-500" />,
         });
     }
 
     const hasNeeds = availablePathways.length > 0;
+
+    // Pre-select all recommended pathways by default
+    const [selectedPathways, setSelectedPathways] = useState<string[]>([]);
+
+    useEffect(() => {
+        // Set all available pathways as selected by default
+        setSelectedPathways(availablePathways.map(p => p.id));
+    }, []);
 
     const togglePathway = (pathwayId: string) => {
         setSelectedPathways(prev =>
@@ -115,47 +105,45 @@ function ResultsContent() {
 
     const handleContinue = () => {
         if (selectedPathways.length > 0) {
-            // Navigate to intake with selected pathways
             const params = new URLSearchParams();
             selectedPathways.forEach(p => params.append('pathway', p));
             router.push(`/intake/patient?${params.toString()}`);
         }
     };
 
+    // Dynamic button text
+    const getButtonText = () => {
+        const count = selectedPathways.length;
+        if (count === 0) return 'Selecteer minimaal één traject';
+        if (count === 1) return 'Zet dit traject voor mij in gang';
+        return `Zet deze ${count} trajecten voor mij in gang`;
+    };
+
     return (
-        <div className="container mx-auto max-w-5xl px-4 py-8 md:py-12">
+        <div className="container mx-auto max-w-4xl px-4 py-8 md:py-12">
             <div className="grid gap-8">
                 {/* Header */}
                 <div className="text-center space-y-4">
-                    <h1 className="text-3xl font-bold tracking-tight font-headline">
-                        Uw Persoonlijke Zorgadvies
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">
+                        Uw Persoonlijke Zorgvoorstel
                     </h1>
-                    <p className="text-muted-foreground max-w-2xl mx-auto">
-                        Op basis van uw antwoorden hebben wij de volgende zorgpaden voor u geselecteerd.
-                        Kies de paden waarin u geïnteresseerd bent om door te gaan.
+                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                        Goed dat u de eerste stap heeft gezet! Voor een zo spoedig mogelijk herstel hebben
+                        wij direct de trajecten voor u klaargezet die precies bij uw situatie passen.
                     </p>
                 </div>
 
                 {hasNeeds ? (
                     <>
-                        {/* Info Card */}
-                        <Card className="bg-blue-50 border-blue-200">
-                            <CardHeader className="flex flex-row items-center gap-4 pb-2">
-                                <Info className="h-6 w-6 text-blue-600" />
-                                <div>
-                                    <CardTitle className="text-lg text-blue-900">Hoe werkt het?</CardTitle>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="text-blue-800 text-sm space-y-2">
-                                <p><strong>Online behandelingen:</strong> Voor diëtist, stoppen met roken en GLI programma - de complete begeleiding vindt online plaats via onze partners.</p>
-                                <p><strong>Hybride behandelingen:</strong> Voor fysiotherapie en ergotherapie - eerst een online intake en behandelplan, daarna wordt u gekoppeld aan een therapeut bij u in de buurt.</p>
-                            </CardContent>
-                        </Card>
-
                         {/* Pathway Selection */}
                         <div className="space-y-4">
-                            <h2 className="text-xl font-semibold">Selecteer uw zorgpaden</h2>
-                            <div className="grid gap-4 md:grid-cols-2">
+                            <div className="text-center space-y-2">
+                                <h2 className="text-xl font-semibold">Uw Samengestelde Herstelplan</h2>
+                                <p className="text-muted-foreground">
+                                    Wij hebben de onderdelen die passen bij uw situatie alvast voor u aangevinkt.
+                                </p>
+                            </div>
+                            <div className="grid gap-4">
                                 {availablePathways.map((pathway) => (
                                     <Card
                                         key={pathway.id}
@@ -167,66 +155,55 @@ function ResultsContent() {
                                         onClick={() => togglePathway(pathway.id)}
                                     >
                                         <CardHeader className="pb-3">
-                                            <div className="flex items-start justify-between">
-                                                <div className="flex items-center gap-3">
-                                                    {pathway.icon}
-                                                    <div>
-                                                        <CardTitle className="text-lg">{pathway.title}</CardTitle>
-                                                        <Badge
-                                                            variant={pathway.type === 'online' ? 'secondary' : 'outline'}
-                                                            className="mt-1"
-                                                        >
-                                                            {pathway.type === 'online' ? 'Online' : 'Hybride'}
-                                                        </Badge>
-                                                    </div>
-                                                </div>
+                                            <div className="flex items-start gap-4">
                                                 <Checkbox
                                                     checked={selectedPathways.includes(pathway.id)}
                                                     onCheckedChange={() => togglePathway(pathway.id)}
-                                                    className="h-6 w-6"
+                                                    className="h-6 w-6 mt-1"
                                                 />
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-3 mb-2">
+                                                        {pathway.icon}
+                                                        <CardTitle className="text-lg">{pathway.title}</CardTitle>
+                                                    </div>
+                                                    <CardDescription className="text-sm leading-relaxed">
+                                                        {pathway.description}
+                                                    </CardDescription>
+                                                </div>
                                             </div>
                                         </CardHeader>
-                                        <CardContent className="pt-0">
-                                            <CardDescription className="text-sm">
-                                                {pathway.description}
-                                            </CardDescription>
-                                            <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1">
-                                                <CheckCircle2 className="h-3 w-3" />
-                                                {pathway.typeLabel}
-                                            </p>
-                                        </CardContent>
                                     </Card>
                                 ))}
                             </div>
                         </div>
 
-                        {/* Insurance Info */}
-                        <Card className="bg-green-50 border-green-200">
-                            <CardHeader className="flex flex-row items-center gap-4">
-                                <ShieldCheck className="h-8 w-8 text-green-600" />
+                        {/* Cost Info */}
+                        <Card className="bg-muted/50 border-muted">
+                            <CardHeader className="flex flex-row items-start gap-4">
+                                <Euro className="h-8 w-8 text-muted-foreground mt-1" />
                                 <div>
-                                    <CardTitle className="text-lg text-green-900">Vergoeding</CardTitle>
-                                    <CardDescription className="text-green-700">
-                                        De meeste behandelingen worden vergoed vanuit de basisverzekering.
-                                        Houd er rekening mee dat dit ten koste kan gaan van uw eigen risico.
+                                    <CardTitle className="text-lg">Over de kosten</CardTitle>
+                                    <CardDescription className="text-sm leading-relaxed mt-2">
+                                        U bent hiervoor verzekerd via uw basispakket. Dat betekent dat de verzekeraar
+                                        de kosten dekt. Heeft u uw eigen risico voor dit jaar nog niet verbruikt?
+                                        Dan wordt dat eerst aangesproken, net als bij een bezoek aan het ziekenhuis.
                                     </CardDescription>
                                 </div>
                             </CardHeader>
                         </Card>
 
-                        {/* Action Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                        {/* Action Button */}
+                        <div className="flex flex-col items-center gap-4 pt-4">
                             <Button
                                 size="lg"
                                 onClick={handleContinue}
                                 disabled={selectedPathways.length === 0}
-                                className="min-w-[200px]"
+                                className="w-full sm:w-auto min-w-[320px] h-14 text-lg"
                             >
-                                Doorgaan met {selectedPathways.length} zorgpad{selectedPathways.length !== 1 ? 'en' : ''}
+                                {getButtonText()}
                                 <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
-                            <Button variant="outline" size="lg" asChild>
+                            <Button variant="ghost" size="sm" asChild>
                                 <Link href="/">Terug naar home</Link>
                             </Button>
                         </div>

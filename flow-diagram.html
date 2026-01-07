@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oscar Questionnaire Flow</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+      min-height: 100vh;
+      padding: 40px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 40px;
+      font-size: 16px;
+    }
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      width: 100%;
+      max-width: 700px;
+    }
+    .step-number {
+      width: 36px;
+      height: 36px;
+      background: #3b82f6;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .step-box {
+      flex: 1;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px 20px;
+      transition: all 0.2s;
+    }
+    .step-box:hover {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+    .step-title {
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .step-desc {
+      font-size: 13px;
+      color: #64748b;
+    }
+    .arrow {
+      color: #3b82f6;
+      font-size: 24px;
+    }
+    .branch {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+      max-width: 700px;
+      margin-left: 51px;
+    }
+    .branch-item {
+      flex: 1;
+      background: #fef3c7;
+      border: 2px solid #fbbf24;
+      border-radius: 12px;
+      padding: 12px 16px;
+      text-align: center;
+    }
+    .branch-item.stop {
+      background: #fee2e2;
+      border-color: #f87171;
+    }
+    .branch-item.continue {
+      background: #d1fae5;
+      border-color: #34d399;
+    }
+    .result-section {
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 2px dashed #e2e8f0;
+    }
+    .result-title {
+      text-align: center;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+    .pathways {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+    .pathway {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    .pathway.green { background: linear-gradient(135deg, #22c55e, #16a34a); }
+    .pathway.orange { background: linear-gradient(135deg, #f97316, #ea580c); }
+    .pathway.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .pathway.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .legend {
+      margin-top: 30px;
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #64748b;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+    }
+    .legend-dot.green { background: #d1fae5; border: 2px solid #34d399; }
+    .legend-dot.red { background: #fee2e2; border: 2px solid #f87171; }
+    .legend-dot.yellow { background: #fef3c7; border: 2px solid #fbbf24; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Oscar Questionnaire Flow</h1>
+    <p class="subtitle">Conditional logic based on user answers</p>
+
+    <div class="flow">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-box">
+          <div class="step-title">Heeft u klachten aan uw heup of knie?</div>
+          <div class="step-desc">Hip or knee complaints check</div>
+        </div>
+      </div>
+
+      <div class="arrow">↓</div>
+
+      <div class="branch">
+        <div class="branch-item stop">Nee → Stop (not eligible)</div>
+        <div class="branch-item continue">Ja → Continue</div>
+      </div>
+
+      <div class="arrow">↓</div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-box">
+          <div class="step-title">Is de diagnose artrose vastgesteld door een arts?</div>
+          <div class="step-desc">If No → Check age (must be 50+)</div>
+        </div>
+      </div>
+
+      <div class="arrow">↓</div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-box">
+          <div class="step-title">Red Flags Check</div>
+          <div class="step-desc">Redness, fever, acute pain → Refer to doctor immediately</div>
+        </div>
+      </div>
+
+      <div class="arrow">↓</div>
+
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-box">
+          <div class="step-title">Recent Fysiotherapie?</div>
+          <div class="step-desc">If Yes → Ask about network physiotherapist preference</div>
+        </div>
+      </div>
+
+      <div class="arrow">↓</div>
+
+      <div class="step">
+        <div class="step-number">5</div>
+        <div class="step-box">
+          <div class="step-title">ADL Beperkingen (Daily Activities)</div>
+          <div class="step-desc">Walking, stairs, sports, dressing → Determines Ergotherapy need</div>
+        </div>
+      </div>
+
+      <div class="arrow">↓</div>
+
+      <div class="step">
+        <div class="step-number">6</div>
+        <div class="step-box">
+          <div class="step-title">BMI Calculation</div>
+          <div class="step-desc">BMI > 25 → GLI + Dietitian pathway</div>
+        </div>
+      </div>
+
+      <div class="arrow">↓</div>
+
+      <div class="step">
+        <div class="step-number">7</div>
+        <div class="step-box">
+          <div class="step-title">Nutrition Screening (if BMI ≤ 25)</div>
+          <div class="step-desc">Weight loss, appetite, energy, fruit/veg intake</div>
+        </div>
+      </div>
+
+      <div class="arrow">↓</div>
+
+      <div class="step">
+        <div class="step-number">8</div>
+        <div class="step-box">
+          <div class="step-title">Rookt u? (Smoking)</div>
+          <div class="step-desc">If Yes → Stop smoking pathway</div>
+        </div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-title">→ Results: Personalized Care Pathways</div>
+        <div class="pathways">
+          <div class="pathway">Fysiotherapie</div>
+          <div class="pathway green">Ergotherapie</div>
+          <div class="pathway orange">Diëtist</div>
+          <div class="pathway purple">GLI Programma</div>
+          <div class="pathway red">Stoppen met Roken</div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-dot green"></div>
+          <span>Continue to next</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot red"></div>
+          <span>Hard stop / Refer</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot yellow"></div>
+          <span>Conditional branch</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
