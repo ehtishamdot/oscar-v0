@@ -1,14 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Logo from '@/components/logo';
 import { Button } from '@/components/ui/button';
-import { Menu, X, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 const Header = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
   const navLinks = [
@@ -59,55 +57,16 @@ const Header = () => {
           </div>
         </nav>
 
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label={mobileMenuOpen ? 'Sluit menu' : 'Open menu'}
-        >
-          {mobileMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </button>
-      </div>
-
-      {/* Mobile Navigation */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t bg-background animate-in slide-in-from-top-2 duration-200">
-          <nav className="container px-4 py-4 space-y-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`
-                  block px-4 py-3 rounded-lg text-base font-medium transition-colors
-                  ${isActive(link.href)
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  }
-                `}
-              >
-                {link.label}
-              </Link>
-            ))}
-            <div className="pt-2">
-              <Button asChild className="w-full" size="lg">
-                <Link
-                  href="/questionnaire"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="gap-2"
-                >
-                  Start de Vragenlijst
-                  <ArrowRight className="h-5 w-5" />
-                </Link>
-              </Button>
-            </div>
-          </nav>
+        {/* Mobile: Just show Start button */}
+        <div className="md:hidden">
+          <Button asChild size="sm">
+            <Link href="/questionnaire" className="gap-2">
+              Start
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
         </div>
-      )}
+      </div>
     </header>
   );
 };

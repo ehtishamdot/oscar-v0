@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import Header from '@/components/header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   ArrowRight,
   ArrowLeft,
@@ -24,9 +25,12 @@ import {
   HeartPulse,
   Stethoscope,
   Salad,
-  CigaretteOff
+  CigaretteOff,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { nanoid } from 'nanoid';
 
 const pathwayInfo: Record<string, { title: string; icon: React.ReactNode; color: string }> = {
   fysio: { title: 'Fysiotherapie', icon: <HeartPulse className="h-5 w-5" />, color: 'text-blue-500' },
@@ -43,6 +47,21 @@ function PatientIntakeContent() {
 
   const [step, setStep] = useState(1);
   const totalSteps = 3;
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [questionnaireAnswers, setQuestionnaireAnswers] = useState<Record<string, Record<string, unknown>>>({});
+
+  // Load questionnaire answers from sessionStorage
+  useEffect(() => {
+    const stored = sessionStorage.getItem('intakeAnswers');
+    if (stored) {
+      try {
+        setQuestionnaireAnswers(JSON.parse(stored));
+      } catch (e) {
+        console.error('Failed to parse intake answers:', e);
+      }
+    }
+  }, []);
 
   const [formData, setFormData] = useState({
     // Personal Info
@@ -83,13 +102,90 @@ function PatientIntakeContent() {
     }
   };
 
-  const handleSubmit = () => {
-    // In production, this would save to database and trigger partner notifications
-    console.log('Form submitted:', formData);
-    console.log('Selected pathways:', pathways);
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    setSubmitError(null);
 
-    // Navigate to confirmation page
-    router.push('/intake/confirmation');
+    try {
+      // Generate a unique patient ID
+      const patientId = nanoid();
+
+      // For now, use a default provider - in production this would come from pathway configuration
+      // Each pathway could have different providers
+      const defaultProvider = {
+        id: 'default-provider',
+        email: process.env.NEXT_PUBLIC_DEFAULT_PROVIDER_EMAIL || 'provider@oscar-zorg.nl',
+        phone: process.env.NEXT_PUBLIC_DEFAULT_PROVIDER_PHONE || '+31612345678',
+      };
+
+      // Build the intake data payload
+      const intakeData = {
+        patient: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          dateOfBirth: formData.dateOfBirth,
+          gender: formData.gender,
+          email: formData.email,
+          phone: formData.phone,
+          street: formData.street,
+          houseNumber: formData.houseNumber,
+          postalCode: formData.postalCode,
+          city: formData.city,
+        },
+        medical: {
+          currentComplaints: formData.currentComplaints,
+          complaintsLocation: formData.complaintsLocation,
+          complaintsDuration: formData.complaintsDuration,
+          previousTreatments: formData.previousTreatments,
+          medications: formData.medications,
+          otherConditions: formData.otherConditions,
+        },
+        consents: {
+          privacy: formData.consentPrivacy,
+          treatment: formData.consentTreatment,
+          dataSharing: formData.consentDataSharing,
+        },
+        questionnaireAnswers: questionnaireAnswers,
+      };
+
+      // Create secure message and send to provider
+      const response = await fetch('/api/provider/message/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          patientId,
+          providerId: defaultProvider.id,
+          providerEmail: defaultProvider.email,
+          providerPhone: defaultProvider.phone,
+          pathways,
+          intakeData,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Er is een fout opgetreden bij het verzenden van uw gegevens.');
+      }
+
+      // Clear session storage
+      sessionStorage.removeItem('intakeAnswers');
+      sessionStorage.removeItem('jointSelection');
+      sessionStorage.removeItem('questionnaireAnswers');
+
+      // Navigate to confirmation page
+      router.push('/intake/confirmation');
+
+    } catch (error) {
+      console.error('Submit error:', error);
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : 'Er is een fout opgetreden. Probeer het opnieuw.'
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const canProceed = () => {
@@ -453,11 +549,20 @@ function PatientIntakeContent() {
         </Card>
       )}
 
+      {/* Error Display */}
+      {submitError && (
+        <Alert variant="destructive" className="mt-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{submitError}</AlertDescription>
+        </Alert>
+      )}
+
       {/* Navigation Buttons */}
       <div className="flex justify-between mt-8">
         <Button
           variant="outline"
           onClick={() => step > 1 ? setStep(step - 1) : router.back()}
+          disabled={submitting}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           {step === 1 ? 'Terug' : 'Vorige'}
@@ -469,9 +574,18 @@ function PatientIntakeContent() {
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         ) : (
-          <Button onClick={handleSubmit} disabled={!canProceed()}>
-            Aanmelden
-            <ArrowRight className="ml-2 h-4 w-4" />
+          <Button onClick={handleSubmit} disabled={!canProceed() || submitting}>
+            {submitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Verzenden...
+              </>
+            ) : (
+              <>
+                Aanmelden
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            )}
           </Button>
         )}
       </div>

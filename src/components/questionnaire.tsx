@@ -52,6 +52,7 @@ export type CareNeeds = {
 // Question IDs based on documentation
 type QuestionId =
   | 'Q_COMPLAINT'
+  | 'Q_JOINT_SELECT'
   | 'Q_DIAGNOSIS'
   | 'Q_AGE'
   | 'Q_RED_FLAGS'
@@ -95,7 +96,7 @@ interface BMIQuestion extends BaseQuestion {
 
 type Question = RadioQuestion | CheckboxQuestion | BMIQuestion;
 
-const TOTAL_QUESTIONS = 10;
+const TOTAL_QUESTIONS = 11;
 
 const questions: Record<string, Question> = {
   Q_COMPLAINT: {
@@ -107,13 +108,27 @@ const questions: Record<string, Question> = {
       { text: 'Ja', value: 'ja', icon: ThumbsUp },
       { text: 'Nee', value: 'nee', icon: ThumbsDown },
     ],
-    next: (answer) => (answer === 'ja' ? 'Q_DIAGNOSIS' : 'HARD_STOP_NO_COMPLAINT'),
+    next: (answer) => (answer === 'ja' ? 'Q_JOINT_SELECT' : 'HARD_STOP_NO_COMPLAINT'),
+  },
+  Q_JOINT_SELECT: {
+    id: 'Q_JOINT_SELECT',
+    text: 'Om welk gewricht of welke gewrichten gaat het?',
+    subtext: 'Meerdere antwoorden mogelijk',
+    type: 'checkbox',
+    questionNumber: 2,
+    options: [
+      { id: 'heup_links', text: 'Heup links', icon: PersonStanding },
+      { id: 'heup_rechts', text: 'Heup rechts', icon: PersonStanding },
+      { id: 'knie_links', text: 'Knie links', icon: Footprints },
+      { id: 'knie_rechts', text: 'Knie rechts', icon: Footprints },
+    ],
+    next: () => 'Q_DIAGNOSIS',
   },
   Q_DIAGNOSIS: {
     id: 'Q_DIAGNOSIS',
     text: 'Is de diagnose artrose bij u vastgesteld door een arts?',
     type: 'radio',
-    questionNumber: 2,
+    questionNumber: 3,
     options: [
       { text: 'Ja', value: 'ja', icon: ThumbsUp },
       { text: 'Nee', value: 'nee', icon: ThumbsDown },
@@ -124,7 +139,7 @@ const questions: Record<string, Question> = {
     id: 'Q_AGE',
     text: 'Bent u ouder dan 50 jaar?',
     type: 'radio',
-    questionNumber: 3,
+    questionNumber: 4,
     options: [
       { text: 'Ja, 50 jaar of ouder', value: 'ja', icon: UserRoundCheck },
       { text: 'Nee, jonger dan 50', value: 'nee', icon: UserRound },
@@ -136,7 +151,7 @@ const questions: Record<string, Question> = {
     text: 'Heeft u last van één of meer van de volgende symptomen?',
     subtext: '• Plotselinge roodheid rond het gewricht\n• Hoge koorts\n• Extreme acute pijn',
     type: 'radio',
-    questionNumber: 4,
+    questionNumber: 5,
     options: [
       { text: 'Ja, ik heb een of meer van deze symptomen', value: 'ja', icon: AlertTriangle },
       { text: 'Nee, geen van deze symptomen', value: 'nee', icon: Check },
@@ -147,7 +162,7 @@ const questions: Record<string, Question> = {
     id: 'Q_RECENT_FYSIO',
     text: 'Heeft u recent fysiotherapie gehad voor deze klacht?',
     type: 'radio',
-    questionNumber: 5,
+    questionNumber: 6,
     options: [
       { text: 'Ja', value: 'ja', icon: ThumbsUp },
       { text: 'Nee', value: 'nee', icon: ThumbsDown },
@@ -159,7 +174,7 @@ const questions: Record<string, Question> = {
     text: 'Wilt u begeleiding van een gespecialiseerde fysiotherapeut?',
     subtext: 'Onze fysiotherapeuten richten zich specifiek op heup- en knieklachten. We bespreken graag online met u wat de mogelijkheden zijn. Daarna helpen we u aan een passende therapeut bij u in de buurt.',
     type: 'radio',
-    questionNumber: 6,
+    questionNumber: 7,
     options: [
       { text: 'Ja, graag', value: 'ja', icon: ThumbsUp },
       { text: 'Nee, bedankt', value: 'nee', icon: ThumbsDown },
@@ -171,7 +186,7 @@ const questions: Record<string, Question> = {
     text: 'Ervaart u klachten of beperkingen bij het dagelijks functioneren?',
     subtext: 'Selecteer momenten waarbij u klachten heeft.',
     type: 'checkbox',
-    questionNumber: 7,
+    questionNumber: 8,
     options: [
       { id: 'traplopen', text: 'Traplopen', icon: Footprints },
       { id: 'wandelen', text: 'Wandelen', icon: PersonStanding },
@@ -190,7 +205,7 @@ const questions: Record<string, Question> = {
     text: 'Wat is uw lengte en gewicht?',
     subtext: 'Dit helpt ons om passend leefstijladvies te geven.',
     type: 'bmi',
-    questionNumber: 8,
+    questionNumber: 9,
     next: (bmi) => (bmi > 25 ? 'Q_SMOKING' : 'Q_NUTRI_SCREEN'),
   },
   Q_NUTRI_SCREEN: {
@@ -198,7 +213,7 @@ const questions: Record<string, Question> = {
     text: 'Welke van de volgende stellingen zijn op u van toepassing?',
     subtext: 'Selecteer alle opties die van toepassing zijn.',
     type: 'checkbox',
-    questionNumber: 9,
+    questionNumber: 10,
     options: [
       { id: 'groente', text: 'Ik eet weinig groente of fruit', icon: Salad },
       { id: 'gewicht', text: 'Ik ben niet tevreden met mijn gewicht', icon: Scale },
@@ -214,7 +229,7 @@ const questions: Record<string, Question> = {
     id: 'Q_SMOKING',
     text: 'Rookt u?',
     type: 'radio',
-    questionNumber: 10,
+    questionNumber: 11,
     options: [
       { text: 'Ja', value: 'ja', icon: Cigarette },
       { text: 'Nee', value: 'nee', icon: CircleOff },
@@ -635,6 +650,13 @@ const Questionnaire = () => {
     if (finalAnswers.Q_SMOKING === 'ja') {
       careNeeds.smoking = true;
     }
+
+    // Get joint selection to pass to results
+    const jointSelection = finalAnswers.Q_JOINT_SELECT as string[] | undefined;
+
+    // Store joint selection and full answers in sessionStorage for pathway questions
+    sessionStorage.setItem('jointSelection', JSON.stringify(jointSelection || []));
+    sessionStorage.setItem('questionnaireAnswers', JSON.stringify(finalAnswers));
 
     const query = new URLSearchParams({
       physio: String(careNeeds.physio),

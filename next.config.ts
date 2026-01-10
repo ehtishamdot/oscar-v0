@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export',
+  // Using 'standalone' for Docker/Cloud Run deployment
+  output: 'standalone',
   typescript: {
     ignoreBuildErrors: true,
   },

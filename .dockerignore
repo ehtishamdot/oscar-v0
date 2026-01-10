@@ -1,0 +1,39 @@
+# Dependencies
+node_modules
+npm-debug.log
+
+# Next.js
+.next
+out
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Environment files (will be set via Cloud Run)
+.env
+.env.local
+.env.development
+.env.production
+
+# Documentation
+*.md
+docs/
+
+# Firebase (not needed for Cloud Run)
+.firebase
+firebase.json
+firestore.rules
+firestore.indexes.json
+.firebaserc
+apphosting.yaml
+
+# Misc
+.DS_Store
+Thumbs.db

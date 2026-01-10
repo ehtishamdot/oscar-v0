@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Secure messages - server-only access via Admin SDK
+    match /secure_messages/{messageId} {
+      allow read, write: if false;
+    }
+
+    // Access tokens - server-only access via Admin SDK
+    match /access_tokens/{tokenId} {
+      allow read, write: if false;
+    }
+
+    // Verification codes - server-only access via Admin SDK
+    match /verification_codes/{codeId} {
+      allow read, write: if false;
+    }
+
+    // Provider sessions - server-only access via Admin SDK
+    match /provider_sessions/{sessionId} {
+      allow read, write: if false;
+    }
+
+    // Audit logs - append-only, server-only (immutable)
+    match /audit_logs/{logId} {
+      allow read: if false;
+      allow create: if false;
+      allow update, delete: if false;
+    }
+  }
+}

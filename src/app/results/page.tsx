@@ -16,7 +16,7 @@ import {
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Check } from 'lucide-react';
 
 interface PathwayOption {
   id: string;
@@ -87,11 +87,11 @@ function ResultsContent() {
 
     const hasNeeds = availablePathways.length > 0;
 
-    // Pre-select all recommended pathways by default
+    // Multi-select: all pathways ON by default (patient deselects to opt-out)
     const [selectedPathways, setSelectedPathways] = useState<string[]>([]);
 
     useEffect(() => {
-        // Set all available pathways as selected by default
+        // Pre-select ALL available pathways by default
         setSelectedPathways(availablePathways.map(p => p.id));
     }, []);
 
@@ -107,7 +107,7 @@ function ResultsContent() {
         if (selectedPathways.length > 0) {
             const params = new URLSearchParams();
             selectedPathways.forEach(p => params.append('pathway', p));
-            router.push(`/intake/patient?${params.toString()}`);
+            router.push(`/intake/questions?${params.toString()}`);
         }
     };
 
@@ -140,7 +140,8 @@ function ResultsContent() {
                             <div className="text-center space-y-2">
                                 <h2 className="text-xl font-semibold">Uw Samengestelde Herstelplan</h2>
                                 <p className="text-muted-foreground">
-                                    Wij hebben de onderdelen die passen bij uw situatie alvast voor u aangevinkt.
+                                    Wij hebben alle trajecten die bij uw situatie passen alvast aangevinkt.
+                                    Deselecteer wat u niet wilt.
                                 </p>
                             </div>
                             <div className="grid gap-4">
@@ -150,17 +151,21 @@ function ResultsContent() {
                                         className={`cursor-pointer transition-all ${
                                             selectedPathways.includes(pathway.id)
                                                 ? 'ring-2 ring-primary border-primary bg-primary/5'
-                                                : 'hover:border-primary/50'
+                                                : 'hover:border-primary/50 opacity-60'
                                         }`}
                                         onClick={() => togglePathway(pathway.id)}
                                     >
                                         <CardHeader className="pb-3">
                                             <div className="flex items-start gap-4">
-                                                <Checkbox
-                                                    checked={selectedPathways.includes(pathway.id)}
-                                                    onCheckedChange={() => togglePathway(pathway.id)}
-                                                    className="h-6 w-6 mt-1"
-                                                />
+                                                <div className={`w-6 h-6 mt-1 rounded-md border-2 flex items-center justify-center flex-shrink-0 ${
+                                                    selectedPathways.includes(pathway.id)
+                                                        ? 'border-primary bg-primary'
+                                                        : 'border-muted-foreground/30'
+                                                }`}>
+                                                    {selectedPathways.includes(pathway.id) && (
+                                                        <Check className="h-4 w-4 text-primary-foreground" />
+                                                    )}
+                                                </div>
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-3 mb-2">
                                                         {pathway.icon}
