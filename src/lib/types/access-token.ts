@@ -9,9 +9,10 @@ export interface AccessToken {
   tokenHash: string;             // SHA-256 hash of the actual token
 
   // Lifecycle
-  status: 'active' | 'used' | 'expired' | 'revoked';
+  status: 'active' | 'code_pending' | 'used' | 'expired' | 'revoked';
   createdAt: Timestamp;
   expiresAt: Timestamp;          // 24 hours from creation
+  codeGeneratedAt?: Timestamp;   // When verification code was generated
   usedAt?: Timestamp;
 
   // Security tracking

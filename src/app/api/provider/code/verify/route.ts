@@ -1,10 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import crypto from 'crypto';
 import { getFirestoreAdmin } from '@/lib/firebase/admin';
 import { hashCode, getMaxCodeAttempts } from '@/lib/services/verification';
 import { generateSessionToken, getSessionExpiry } from '@/lib/services/session';
 import { createAuditLog } from '@/lib/services/audit';
 import { FieldValue } from 'firebase-admin/firestore';
+
+/**
+ * Timing-safe comparison of two hash strings
+ * Prevents timing attacks by ensuring constant-time comparison
+ */
+function timingSafeCompare(a: string, b: string): boolean {
+  try {
+    const bufA = Buffer.from(a, 'hex');
+    const bufB = Buffer.from(b, 'hex');
+    if (bufA.length !== bufB.length) {
+      return false;
+    }
+    return crypto.timingSafeEqual(bufA, bufB);
+  } catch {
+    return false;
+  }
+}
 
 const VerifyCodeSchema = z.object({
   codeId: z.string().min(1),
@@ -86,10 +104,10 @@ export async function POST(request: NextRequest) {
       lastAttemptAt: FieldValue.serverTimestamp(),
     });
 
-    // 6. Verify the code
+    // 6. Verify the code using timing-safe comparison
     const providedCodeHash = hashCode(code);
 
-    if (providedCodeHash !== codeData.codeHash) {
+    if (!timingSafeCompare(providedCodeHash, codeData.codeHash)) {
       const remainingAttempts = maxAttempts - (codeData.attempts + 1);
 
       await createAuditLog({

@@ -46,7 +46,14 @@ export async function POST(request: NextRequest) {
 
     const tokenData = tokenDoc.data()!;
 
-    // 2. Check token status
+    // 2. Check token status (active = unused, code_pending = code already generated)
+    if (tokenData.status === 'code_pending') {
+      return NextResponse.json(
+        { success: false, error: 'Er is al een verificatiecode verzonden. Controleer uw e-mail of SMS.' },
+        { status: 400 }
+      );
+    }
+
     if (tokenData.status !== 'active') {
       return NextResponse.json(
         { success: false, error: 'Deze link is al gebruikt of ingetrokken' },
@@ -90,6 +97,12 @@ export async function POST(request: NextRequest) {
     // 5. Generate verification code
     const { code, codeHash } = generateVerificationCode();
     const codeExpiresAt = getCodeExpiry();
+
+    // 5a. Mark token as code_pending to prevent duplicate code generation
+    await db.collection('access_tokens').doc(tokenHash).update({
+      status: 'code_pending',
+      codeGeneratedAt: FieldValue.serverTimestamp(),
+    });
 
     const codeRef = db.collection('verification_codes').doc();
     await codeRef.set({

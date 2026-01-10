@@ -13,6 +13,8 @@ export type AuditAction =
   | 'CODE_FAILED'
   | 'CODE_BLOCKED'
   | 'SESSION_CREATED'
+  | 'SESSION_CONTEXT_MISMATCH'  // IP/User-Agent changed during session
+  | 'SESSION_IDLE_EXPIRED'      // Session expired due to inactivity
   | 'CONTENT_DECRYPTED'
   | 'CONTENT_ACCESSED'
   | 'CONTENT_DOWNLOADED'
