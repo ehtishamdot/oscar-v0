@@ -20,7 +20,8 @@ build/
 .env.production.local
 
 # IDE
-.idx/
+.idx/*
+!.idx/dev.nix
 .idea/
 .vscode/
 *.swp

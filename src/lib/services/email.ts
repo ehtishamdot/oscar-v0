@@ -1,12 +1,21 @@
-import sgMail from '@sendgrid/mail';
+import nodemailer from 'nodemailer';
 
-// Initialize SendGrid (lazy)
-let sgInitialized = false;
-function initSendGrid() {
-  if (!sgInitialized && process.env.SENDGRID_API_KEY) {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    sgInitialized = true;
+// SMTP transporter (lazy initialization)
+let transporter: nodemailer.Transporter | null = null;
+
+function getTransporter(): nodemailer.Transporter {
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'mail.yourdomain.com',
+      port: parseInt(process.env.SMTP_PORT || '465', 10),
+      secure: process.env.SMTP_SECURE !== 'false', // true for 465, false for 587
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
   }
+  return transporter;
 }
 
 export interface ProviderNotificationParams {
@@ -30,20 +39,18 @@ const pathwayNames: Record<string, string> = {
  * This complies with NEN 7510 - email is for notification only
  */
 export async function sendProviderNotification(params: ProviderNotificationParams): Promise<void> {
-  initSendGrid();
-
   const { to, accessUrl, patientInitials, pathways } = params;
 
   const pathwayList = pathways
     .map(p => pathwayNames[p] || p)
     .join(', ');
 
-  await sgMail.send({
+  const fromEmail = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || 'noreply@oscar-zorg.nl';
+  const fromName = process.env.SMTP_FROM_NAME || 'Oscar Zorgcoordinatie';
+
+  await getTransporter().sendMail({
+    from: `"${fromName}" <${fromEmail}>`,
     to: to,
-    from: {
-      email: process.env.SENDGRID_FROM_EMAIL || 'noreply@oscar-zorg.nl',
-      name: process.env.SENDGRID_FROM_NAME || 'Oscar Zorgcoordinatie',
-    },
     subject: 'Oscar - Nieuwe intake beschikbaar',
     text: `
 Er staat een nieuwe patient intake klaar voor u.
@@ -108,20 +115,18 @@ export async function sendPatientConfirmation(params: {
   patientName: string;
   pathways: string[];
 }): Promise<void> {
-  initSendGrid();
-
   const { to, patientName, pathways } = params;
 
   const pathwayList = pathways
     .map(p => pathwayNames[p] || p)
     .join(', ');
 
-  await sgMail.send({
+  const fromEmail = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || 'noreply@oscar-zorg.nl';
+  const fromName = process.env.SMTP_FROM_NAME || 'Oscar Zorgcoordinatie';
+
+  await getTransporter().sendMail({
+    from: `"${fromName}" <${fromEmail}>`,
     to: to,
-    from: {
-      email: process.env.SENDGRID_FROM_EMAIL || 'noreply@oscar-zorg.nl',
-      name: process.env.SENDGRID_FROM_NAME || 'Oscar Zorgcoordinatie',
-    },
     subject: 'Oscar - Bevestiging van uw aanmelding',
     text: `
 Beste ${patientName},

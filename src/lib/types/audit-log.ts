@@ -19,16 +19,32 @@ export type AuditAction =
   | 'CONTENT_ACCESSED'
   | 'CONTENT_DOWNLOADED'
   | 'SESSION_EXPIRED'
-  | 'SESSION_TERMINATED';
+  | 'SESSION_TERMINATED'
+  // Admin actions
+  | 'ADMIN_LOGIN_SUCCESS'
+  | 'ADMIN_LOGIN_FAILED'
+  | 'ADMIN_LOGIN_BLOCKED'
+  | 'ADMIN_LOGOUT'
+  | 'ADMIN_SESSION_EXPIRED'
+  | 'ADMIN_PARTNER_CREATED'
+  | 'ADMIN_PARTNER_UPDATED'
+  | 'ADMIN_PARTNER_DELETED'
+  | 'ADMIN_INVOICE_GENERATED'
+  | 'ADMIN_INVOICE_STATUS_CHANGED'
+  | 'ADMIN_DATA_IMPORTED'
+  | 'ADMIN_API_UNAUTHORIZED';
 
 export type AuditResource =
   | 'secure_message'
   | 'access_token'
   | 'verification_code'
   | 'provider_session'
-  | 'patient_data';
+  | 'patient_data'
+  | 'admin_session'
+  | 'partner'
+  | 'invoice';
 
-export type AuditActorType = 'system' | 'patient' | 'provider' | 'coordinator';
+export type AuditActorType = 'system' | 'patient' | 'provider' | 'coordinator' | 'admin';
 
 export interface AuditLogEntry {
   id: string;
@@ -59,14 +75,14 @@ export interface AuditLogEntry {
 }
 
 export interface CreateAuditLogParams {
-  actorType: AuditActorType;
-  actorId: string;
+  actorType?: AuditActorType;
+  actorId?: string;
   actorEmail?: string;
-  action: AuditAction;
-  resource: AuditResource;
-  resourceId: string;
+  action: AuditAction | string;
+  resource: AuditResource | string;
+  resourceId?: string;
   details?: Record<string, unknown>;
-  outcome: 'success' | 'failure';
+  outcome?: 'success' | 'failure';
   errorMessage?: string;
   ipAddress?: string;
   userAgent?: string;

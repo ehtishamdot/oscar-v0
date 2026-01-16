@@ -54,6 +54,7 @@ type QuestionId =
   | 'Q_COMPLAINT'
   | 'Q_JOINT_SELECT'
   | 'Q_DIAGNOSIS'
+  | 'Q_GENDER'
   | 'Q_AGE'
   | 'Q_RED_FLAGS'
   | 'Q_RECENT_FYSIO'
@@ -96,7 +97,7 @@ interface BMIQuestion extends BaseQuestion {
 
 type Question = RadioQuestion | CheckboxQuestion | BMIQuestion;
 
-const TOTAL_QUESTIONS = 11;
+const TOTAL_QUESTIONS = 12;
 
 const questions: Record<string, Question> = {
   Q_COMPLAINT: {
@@ -133,13 +134,26 @@ const questions: Record<string, Question> = {
       { text: 'Ja', value: 'ja', icon: ThumbsUp },
       { text: 'Nee', value: 'nee', icon: ThumbsDown },
     ],
-    next: (answer) => (answer === 'ja' ? 'Q_RECENT_FYSIO' : 'Q_AGE'),
+    next: () => 'Q_GENDER',
+  },
+  Q_GENDER: {
+    id: 'Q_GENDER',
+    text: 'Wat is uw geslacht?',
+    subtext: 'Dit helpt ons om een beter beeld te krijgen van uw situatie.',
+    type: 'radio',
+    questionNumber: 4,
+    options: [
+      { text: 'Man', value: 'man', icon: UserRound },
+      { text: 'Vrouw', value: 'vrouw', icon: UserRound },
+      { text: 'Anders / zeg ik liever niet', value: 'anders', icon: UserRound },
+    ],
+    next: () => 'Q_AGE',
   },
   Q_AGE: {
     id: 'Q_AGE',
     text: 'Bent u ouder dan 50 jaar?',
     type: 'radio',
-    questionNumber: 4,
+    questionNumber: 5,
     options: [
       { text: 'Ja, 50 jaar of ouder', value: 'ja', icon: UserRoundCheck },
       { text: 'Nee, jonger dan 50', value: 'nee', icon: UserRound },
@@ -151,7 +165,7 @@ const questions: Record<string, Question> = {
     text: 'Heeft u last van één of meer van de volgende symptomen?',
     subtext: '• Plotselinge roodheid rond het gewricht\n• Hoge koorts\n• Extreme acute pijn',
     type: 'radio',
-    questionNumber: 5,
+    questionNumber: 6,
     options: [
       { text: 'Ja, ik heb een of meer van deze symptomen', value: 'ja', icon: AlertTriangle },
       { text: 'Nee, geen van deze symptomen', value: 'nee', icon: Check },
@@ -162,7 +176,7 @@ const questions: Record<string, Question> = {
     id: 'Q_RECENT_FYSIO',
     text: 'Heeft u recent fysiotherapie gehad voor deze klacht?',
     type: 'radio',
-    questionNumber: 6,
+    questionNumber: 7,
     options: [
       { text: 'Ja', value: 'ja', icon: ThumbsUp },
       { text: 'Nee', value: 'nee', icon: ThumbsDown },
@@ -174,7 +188,7 @@ const questions: Record<string, Question> = {
     text: 'Wilt u begeleiding van een gespecialiseerde fysiotherapeut?',
     subtext: 'Onze fysiotherapeuten richten zich specifiek op heup- en knieklachten. We bespreken graag online met u wat de mogelijkheden zijn. Daarna helpen we u aan een passende therapeut bij u in de buurt.',
     type: 'radio',
-    questionNumber: 7,
+    questionNumber: 8,
     options: [
       { text: 'Ja, graag', value: 'ja', icon: ThumbsUp },
       { text: 'Nee, bedankt', value: 'nee', icon: ThumbsDown },
@@ -186,7 +200,7 @@ const questions: Record<string, Question> = {
     text: 'Ervaart u klachten of beperkingen bij het dagelijks functioneren?',
     subtext: 'Selecteer momenten waarbij u klachten heeft.',
     type: 'checkbox',
-    questionNumber: 8,
+    questionNumber: 9,
     options: [
       { id: 'traplopen', text: 'Traplopen', icon: Footprints },
       { id: 'wandelen', text: 'Wandelen', icon: PersonStanding },
@@ -203,9 +217,9 @@ const questions: Record<string, Question> = {
   Q_BMI_CALC: {
     id: 'Q_BMI_CALC',
     text: 'Wat is uw lengte en gewicht?',
-    subtext: 'Dit helpt ons om passend leefstijladvies te geven.',
+    subtext: 'Deze informatie gebruiken wij om u het beste advies te kunnen geven. Uw gegevens worden vertrouwelijk behandeld.',
     type: 'bmi',
-    questionNumber: 9,
+    questionNumber: 10,
     next: (bmi) => (bmi > 25 ? 'Q_SMOKING' : 'Q_NUTRI_SCREEN'),
   },
   Q_NUTRI_SCREEN: {
@@ -213,14 +227,14 @@ const questions: Record<string, Question> = {
     text: 'Welke van de volgende stellingen zijn op u van toepassing?',
     subtext: 'Selecteer alle opties die van toepassing zijn.',
     type: 'checkbox',
-    questionNumber: 10,
+    questionNumber: 11,
     options: [
-      { id: 'groente', text: 'Ik eet weinig groente of fruit', icon: Salad },
       { id: 'gewicht', text: 'Ik ben niet tevreden met mijn gewicht', icon: Scale },
       { id: 'alcohol', text: 'Ik drink teveel alcohol', icon: Wine },
       { id: 'energie', text: 'Ik heb weinig energie of ben snel moe', icon: Battery },
-      { id: 'voeding_info', text: 'Ik wil informatie over gezondere voeding', icon: Info },
+      { id: 'groente', text: 'Ik eet weinig groente of fruit', icon: Salad },
       { id: 'eetlust', text: 'Ik heb een verminderde eetlust', icon: Utensils },
+      { id: 'voeding_info', text: 'Ik wil informatie over gezondere voeding', icon: Info },
       { id: 'geen', text: 'Geen van bovenstaande', icon: Ban, exclusive: true },
     ],
     next: () => 'Q_SMOKING',
@@ -229,7 +243,7 @@ const questions: Record<string, Question> = {
     id: 'Q_SMOKING',
     text: 'Rookt u?',
     type: 'radio',
-    questionNumber: 11,
+    questionNumber: 12,
     options: [
       { text: 'Ja', value: 'ja', icon: Cigarette },
       { text: 'Nee', value: 'nee', icon: CircleOff },
@@ -704,17 +718,8 @@ const Questionnaire = () => {
   const currentQuestion = questions[currentQuestionId];
   if (!currentQuestion) return null;
 
-  // Get BMI value for display
-  const getBMICategory = (bmi: number) => {
-    if (bmi < 18.5) return { label: 'Ondergewicht', color: 'text-blue-600', bg: 'bg-blue-100' };
-    if (bmi < 25) return { label: 'Gezond gewicht', color: 'text-green-600', bg: 'bg-green-100' };
-    if (bmi < 30) return { label: 'Overgewicht', color: 'text-orange-600', bg: 'bg-orange-100' };
-    return { label: 'Obesitas', color: 'text-red-600', bg: 'bg-red-100' };
-  };
-
-  const calculatedBMI = height && weight && parseFloat(height) > 0 && parseFloat(weight) > 0
-    ? parseFloat(weight) / Math.pow(parseFloat(height) / 100, 2)
-    : null;
+  // Check if both height and weight are filled in
+  const canSubmitBMI = height && weight && parseFloat(height) > 0 && parseFloat(weight) > 0;
 
   // Format subtext with bullet points
   const formatSubtext = (text: string) => {
@@ -849,17 +854,17 @@ const Questionnaire = () => {
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="height" className="text-base font-medium flex items-center gap-2">
-                    <Scale className="h-4 w-4 text-muted-foreground" />
+                    <PersonStanding className="h-4 w-4 text-muted-foreground" />
                     Lengte
                   </Label>
                   <div className="relative">
                     <Input
                       id="height"
                       type="number"
-                      placeholder="175"
+                      placeholder="bijv. 175"
                       value={height}
                       onChange={(e) => setHeight(e.target.value)}
-                      className="text-2xl h-16 text-center font-semibold pr-12"
+                      className="text-xl h-14 text-center font-medium pr-12"
                       min="100"
                       max="250"
                     />
@@ -877,10 +882,10 @@ const Questionnaire = () => {
                     <Input
                       id="weight"
                       type="number"
-                      placeholder="75"
+                      placeholder="bijv. 75"
                       value={weight}
                       onChange={(e) => setWeight(e.target.value)}
-                      className="text-2xl h-16 text-center font-semibold pr-12"
+                      className="text-xl h-14 text-center font-medium pr-12"
                       min="30"
                       max="300"
                     />
@@ -891,26 +896,11 @@ const Questionnaire = () => {
                 </div>
               </div>
 
-              {/* BMI Display */}
-              {calculatedBMI && (
-                <div className={`p-6 rounded-2xl border-2 transition-all duration-500 ${getBMICategory(calculatedBMI).bg} border-transparent`}>
-                  <div className="text-center">
-                    <p className="text-sm text-muted-foreground mb-2">Uw BMI</p>
-                    <p className={`text-5xl font-bold ${getBMICategory(calculatedBMI).color}`}>
-                      {calculatedBMI.toFixed(1)}
-                    </p>
-                    <p className={`text-lg font-semibold mt-2 ${getBMICategory(calculatedBMI).color}`}>
-                      {getBMICategory(calculatedBMI).label}
-                    </p>
-                  </div>
-                </div>
-              )}
-
               <Button
                 onClick={handleBMISubmit}
                 className="w-full h-14 text-lg gap-2"
                 size="lg"
-                disabled={!calculatedBMI}
+                disabled={!canSubmitBMI}
               >
                 Volgende
                 <ArrowRight className="h-5 w-5" />

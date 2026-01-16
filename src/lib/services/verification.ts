@@ -1,14 +1,22 @@
 import crypto from 'crypto';
-import sgMail from '@sendgrid/mail';
-import { sendSMS } from './sms';
+import nodemailer from 'nodemailer';
 
-// Initialize SendGrid (lazy)
-let sgInitialized = false;
-function initSendGrid() {
-  if (!sgInitialized && process.env.SENDGRID_API_KEY) {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    sgInitialized = true;
+// SMTP transporter (lazy initialization)
+let transporter: nodemailer.Transporter | null = null;
+
+function getTransporter(): nodemailer.Transporter {
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'mail.yourdomain.com',
+      port: parseInt(process.env.SMTP_PORT || '465', 10),
+      secure: process.env.SMTP_SECURE !== 'false', // true for 465, false for 587
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
   }
+  return transporter;
 }
 
 /**
@@ -52,33 +60,23 @@ export function getMaxCodeAttempts(): number {
 }
 
 export interface SendVerificationCodeParams {
-  method: 'email' | 'sms';
+  method: 'email';
   recipient: string;
   code: string;
 }
 
 /**
- * Send verification code via email or SMS
+ * Send verification code via email
  */
 export async function sendVerificationCode(params: SendVerificationCodeParams): Promise<void> {
-  const { method, recipient, code } = params;
+  const { recipient, code } = params;
 
-  if (method === 'email') {
-    await sendVerificationCodeEmail(recipient, code);
-  } else {
-    await sendVerificationCodeSMS(recipient, code);
-  }
-}
+  const fromEmail = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || 'noreply@oscar-zorg.nl';
+  const fromName = process.env.SMTP_FROM_NAME || 'Oscar Zorgcoordinatie';
 
-async function sendVerificationCodeEmail(to: string, code: string): Promise<void> {
-  initSendGrid();
-
-  await sgMail.send({
-    to: to,
-    from: {
-      email: process.env.SENDGRID_FROM_EMAIL || 'noreply@oscar-zorg.nl',
-      name: process.env.SENDGRID_FROM_NAME || 'Oscar Zorgcoordinatie',
-    },
+  await getTransporter().sendMail({
+    from: `"${fromName}" <${fromEmail}>`,
+    to: recipient,
     subject: 'Oscar - Uw verificatiecode',
     text: `Uw verificatiecode is: ${code}\n\nDeze code is 10 minuten geldig.\n\nAls u deze code niet heeft aangevraagd, kunt u dit bericht negeren.`,
     html: `
@@ -106,12 +104,5 @@ async function sendVerificationCodeEmail(to: string, code: string): Promise<void
         </div>
       </div>
     `,
-  });
-}
-
-async function sendVerificationCodeSMS(to: string, code: string): Promise<void> {
-  await sendSMS({
-    to: to,
-    message: `Uw Oscar verificatiecode is: ${code}. Deze code is 10 minuten geldig.`,
   });
 }

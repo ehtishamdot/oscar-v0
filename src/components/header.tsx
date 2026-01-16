@@ -19,6 +19,11 @@ const Header = () => {
     return pathname.startsWith(href);
   };
 
+  // Hide Start button on questionnaire, results, and intake pages
+  const hideStartButton = pathname.startsWith('/questionnaire') ||
+                          pathname.startsWith('/results') ||
+                          pathname.startsWith('/intake');
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
@@ -47,25 +52,29 @@ const Header = () => {
               {link.label}
             </Link>
           ))}
-          <div className="ml-2 pl-2 border-l">
+          {!hideStartButton && (
+            <div className="ml-2 pl-2 border-l">
+              <Button asChild size="sm">
+                <Link href="/questionnaire" className="gap-2">
+                  Start Nu
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          )}
+        </nav>
+
+        {/* Mobile: Just show Start button (hidden on questionnaire pages) */}
+        {!hideStartButton && (
+          <div className="md:hidden">
             <Button asChild size="sm">
               <Link href="/questionnaire" className="gap-2">
-                Start Nu
+                Start
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
           </div>
-        </nav>
-
-        {/* Mobile: Just show Start button */}
-        <div className="md:hidden">
-          <Button asChild size="sm">
-            <Link href="/questionnaire" className="gap-2">
-              Start
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
+        )}
       </div>
     </header>
   );

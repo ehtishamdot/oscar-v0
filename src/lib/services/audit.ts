@@ -16,17 +16,23 @@ export async function createAuditLog(params: CreateAuditLogParams): Promise<stri
     .limit(1)
     .get();
 
-  const previousLogId = recentLogs.empty ? undefined : recentLogs.docs[0].id;
+  const previousLogId = recentLogs.empty ? null : recentLogs.docs[0].id;
+
+  // Default values for optional params
+  const actorType = params.actorType || 'system';
+  const actorId = params.actorId || 'system';
+  const resourceId = params.resourceId || 'none';
+  const outcome = params.outcome || 'success';
 
   // Prepare log content for checksum
   const logContent = {
-    actorType: params.actorType,
-    actorId: params.actorId,
+    actorType,
+    actorId,
     action: params.action,
     resource: params.resource,
-    resourceId: params.resourceId,
+    resourceId,
     details: params.details || {},
-    outcome: params.outcome,
+    outcome,
     previousLogId,
   };
 
@@ -36,16 +42,29 @@ export async function createAuditLog(params: CreateAuditLogParams): Promise<stri
     .update(JSON.stringify(logContent))
     .digest('hex');
 
-  // Create the log entry
+  // Create the log entry - filter out undefined values
   const logRef = db.collection('audit_logs').doc();
 
-  await logRef.set({
-    ...params,
+  const logData: Record<string, unknown> = {
+    actorType,
+    actorId,
+    action: params.action,
+    resource: params.resource,
+    resourceId,
     details: params.details || {},
+    outcome,
     timestamp: FieldValue.serverTimestamp(),
     previousLogId,
     checksum,
-  });
+  };
+
+  // Only add optional fields if they have values
+  if (params.actorEmail) logData.actorEmail = params.actorEmail;
+  if (params.errorMessage) logData.errorMessage = params.errorMessage;
+  if (params.ipAddress) logData.ipAddress = params.ipAddress;
+  if (params.userAgent) logData.userAgent = params.userAgent;
+
+  await logRef.set(logData);
 
   return logRef.id;
 }
@@ -117,13 +136,13 @@ export async function verifyAuditLogIntegrity(
   }
 
   const snapshot = await query.get();
-  let previousLogId: string | undefined;
+  let previousLogId: string | null = null;
 
   for (const doc of snapshot.docs) {
     const log = doc.data();
 
-    // Check chain reference
-    if (previousLogId && log.previousLogId !== previousLogId) {
+    // Check chain reference (first log has null previousLogId)
+    if (previousLogId !== null && log.previousLogId !== previousLogId) {
       errors.push(`Chain broken at log ${doc.id}: expected previousLogId ${previousLogId}, got ${log.previousLogId}`);
     }
 

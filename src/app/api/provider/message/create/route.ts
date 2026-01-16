@@ -11,7 +11,7 @@ const CreateMessageSchema = z.object({
   patientId: z.string().min(1),
   providerId: z.string().min(1),
   providerEmail: z.string().email(),
-  providerPhone: z.string().min(10),
+  providerPhone: z.string().min(10).optional(),
   pathways: z.array(z.string()).min(1),
   intakeData: z.object({
     patient: z.object({
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       patientId: validatedData.patientId,
       providerId: validatedData.providerId,
       providerEmail: validatedData.providerEmail,
-      providerPhone: validatedData.providerPhone,
+      ...(validatedData.providerPhone && { providerPhone: validatedData.providerPhone }),
       encryptedPayload: encryptionResult.ciphertext,
       encryptedDataKey: encryptionResult.encryptedDataKey,
       iv: encryptionResult.iv,

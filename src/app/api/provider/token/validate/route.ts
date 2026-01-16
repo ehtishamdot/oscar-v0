@@ -8,7 +8,6 @@ import { FieldValue } from 'firebase-admin/firestore';
 
 const ValidateTokenSchema = z.object({
   token: z.string().min(32),
-  deliveryMethod: z.enum(['email', 'sms']).default('email'),
 });
 
 export async function POST(request: NextRequest) {
@@ -17,7 +16,8 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { token, deliveryMethod } = ValidateTokenSchema.parse(body);
+    const { token } = ValidateTokenSchema.parse(body);
+    const deliveryMethod = 'email' as const;
 
     const tokenHash = hashToken(token);
     const db = getFirestoreAdmin();
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     // 2. Check token status (active = unused, code_pending = code already generated)
     if (tokenData.status === 'code_pending') {
       return NextResponse.json(
-        { success: false, error: 'Er is al een verificatiecode verzonden. Controleer uw e-mail of SMS.' },
+        { success: false, error: 'Er is al een verificatiecode verzonden. Controleer uw e-mail.' },
         { status: 400 }
       );
     }
@@ -119,9 +119,7 @@ export async function POST(request: NextRequest) {
     });
 
     // 6. Send verification code
-    const recipient = deliveryMethod === 'sms'
-      ? messageData.providerPhone
-      : messageData.providerEmail;
+    const recipient = messageData.providerEmail;
 
     try {
       await sendVerificationCode({
@@ -162,10 +160,8 @@ export async function POST(request: NextRequest) {
       resource: 'verification_code',
       resourceId: codeRef.id,
       details: {
-        method: deliveryMethod,
-        recipientMasked: deliveryMethod === 'email'
-          ? `***@${recipient.split('@')[1]}`
-          : `***${recipient.slice(-4)}`,
+        method: 'email',
+        recipientMasked: `***@${recipient.split('@')[1]}`,
       },
       outcome: 'success',
     });
@@ -174,10 +170,8 @@ export async function POST(request: NextRequest) {
       success: true,
       codeId: codeRef.id,
       expiresAt: codeExpiresAt.toISOString(),
-      deliveryMethod: deliveryMethod,
-      maskedRecipient: deliveryMethod === 'email'
-        ? `***@${recipient.split('@')[1]}`
-        : `***${recipient.slice(-4)}`,
+      deliveryMethod: 'email',
+      maskedRecipient: `***@${recipient.split('@')[1]}`,
     });
 
   } catch (error) {
