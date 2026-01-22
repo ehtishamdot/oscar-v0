@@ -3,34 +3,43 @@
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import Header from '@/components/header';
-import PhysioIntakeForm from '@/components/physio-intake-form';
+import UniversalIntakeForm from '@/components/universal-intake-form';
+
+type Pathway = 'fysio' | 'ergo' | 'diet' | 'smoking' | 'gli';
 
 function IntakeContent() {
-    const searchParams = useSearchParams();
-    const service = searchParams.get('service');
-    const therapistId = searchParams.get('therapistId');
-    const therapistName = searchParams.get('therapistName');
+  const searchParams = useSearchParams();
 
-    // Get initial answers from query params
-    const initialAnswers = {
-      physio: searchParams.get('physio') === 'true',
-      ergo: searchParams.get('ergo') === 'true',
-      diet: searchParams.get('diet') === 'true',
-      smoking: searchParams.get('smoking') === 'true',
-    };
+  // Get selected pathways from query params
+  const pathways: Pathway[] = [];
+  if (searchParams.get('physio') === 'true' || searchParams.get('fysio') === 'true') pathways.push('fysio');
+  if (searchParams.get('ergo') === 'true') pathways.push('ergo');
+  if (searchParams.get('diet') === 'true') pathways.push('diet');
+  if (searchParams.get('smoking') === 'true') pathways.push('smoking');
+  if (searchParams.get('gli') === 'true') pathways.push('gli');
 
-    return (
-        <div className="container mx-auto max-w-3xl px-4 py-8 md:py-12">
-           {service === 'fysiotherapie' && therapistId && therapistName && (
-                <PhysioIntakeForm 
-                    therapistId={therapistId} 
-                    therapistName={therapistName} 
-                    initialAnswers={initialAnswers} 
-                />
-            )}
-            {/* You can add other services here later if needed */}
-        </div>
-    );
+  // Default to fysio if no pathways selected
+  if (pathways.length === 0) {
+    pathways.push('fysio');
+  }
+
+  // Get initial answers for display
+  const initialAnswers = {
+    physio: searchParams.get('physio') === 'true' || searchParams.get('fysio') === 'true',
+    ergo: searchParams.get('ergo') === 'true',
+    diet: searchParams.get('diet') === 'true',
+    smoking: searchParams.get('smoking') === 'true',
+    gli: searchParams.get('gli') === 'true',
+  };
+
+  return (
+    <div className="container mx-auto max-w-3xl px-4 py-8 md:py-12">
+      <UniversalIntakeForm
+        pathways={pathways}
+        initialAnswers={initialAnswers}
+      />
+    </div>
+  );
 }
 
 export default function IntakePage() {
@@ -39,7 +48,7 @@ export default function IntakePage() {
       <Header />
       <main className="flex-1">
         <Suspense fallback={<div className="text-center p-12">Intakeformulier laden...</div>}>
-            <IntakeContent />
+          <IntakeContent />
         </Suspense>
       </main>
       <footer className="py-6 text-center text-sm text-muted-foreground">
