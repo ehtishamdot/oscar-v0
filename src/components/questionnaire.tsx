@@ -23,9 +23,6 @@ import {
   HelpCircle,
   Ban,
   Scale,
-  Apple,
-  Cigarette,
-  CircleOff,
   Bike,
   ShoppingBag,
   House,
@@ -35,7 +32,6 @@ import {
   Info,
   Utensils,
   Heart,
-  X,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -44,9 +40,7 @@ export type CareNeeds = {
   physio: boolean;
   physioNetwork: boolean;
   ergo: boolean;
-  gli: boolean;
   diet: boolean;
-  smoking: boolean;
 };
 
 // Question IDs based on documentation
@@ -62,7 +56,6 @@ type QuestionId =
   | 'Q_ADL'
   | 'Q_BMI_CALC'
   | 'Q_NUTRI_SCREEN'
-  | 'Q_SMOKING'
   | 'HARD_STOP_NO_COMPLAINT'
   | 'HARD_STOP_AGE'
   | 'HARD_STOP_RED_FLAGS'
@@ -97,7 +90,7 @@ interface BMIQuestion extends BaseQuestion {
 
 type Question = RadioQuestion | CheckboxQuestion | BMIQuestion;
 
-const TOTAL_QUESTIONS = 12;
+const TOTAL_QUESTIONS = 11;
 
 const questions: Record<string, Question> = {
   Q_COMPLAINT: {
@@ -127,12 +120,13 @@ const questions: Record<string, Question> = {
   },
   Q_DIAGNOSIS: {
     id: 'Q_DIAGNOSIS',
-    text: 'Is de diagnose artrose bij u vastgesteld door een arts?',
+    text: 'Denkt u dat uw klachten door artrose komen?',
+    subtext: 'Artrose is slijtage van het kraakbeen in uw gewrichten. Dit kan pijn en stijfheid veroorzaken.',
     type: 'radio',
     questionNumber: 3,
     options: [
-      { text: 'Ja', value: 'ja', icon: ThumbsUp },
-      { text: 'Nee', value: 'nee', icon: ThumbsDown },
+      { text: 'Ja, ik denk het wel', value: 'ja', icon: ThumbsUp },
+      { text: 'Nee / Weet ik niet', value: 'nee', icon: ThumbsDown },
     ],
     next: () => 'Q_GENDER',
   },
@@ -220,7 +214,7 @@ const questions: Record<string, Question> = {
     subtext: 'Deze informatie gebruiken wij om u het beste advies te kunnen geven. Uw gegevens worden vertrouwelijk behandeld.',
     type: 'bmi',
     questionNumber: 10,
-    next: (bmi) => (bmi > 25 ? 'Q_SMOKING' : 'Q_NUTRI_SCREEN'),
+    next: () => 'Q_NUTRI_SCREEN',
   },
   Q_NUTRI_SCREEN: {
     id: 'Q_NUTRI_SCREEN',
@@ -236,17 +230,6 @@ const questions: Record<string, Question> = {
       { id: 'eetlust', text: 'Ik heb een verminderde eetlust', icon: Utensils },
       { id: 'voeding_info', text: 'Ik wil informatie over gezondere voeding', icon: Info },
       { id: 'geen', text: 'Geen van bovenstaande', icon: Ban, exclusive: true },
-    ],
-    next: () => 'Q_SMOKING',
-  },
-  Q_SMOKING: {
-    id: 'Q_SMOKING',
-    text: 'Rookt u?',
-    type: 'radio',
-    questionNumber: 12,
-    options: [
-      { text: 'Ja', value: 'ja', icon: Cigarette },
-      { text: 'Nee', value: 'nee', icon: CircleOff },
     ],
     next: () => 'END',
   },
@@ -632,9 +615,7 @@ const Questionnaire = () => {
       physio: false,
       physioNetwork: false,
       ergo: false,
-      gli: false,
       diet: false,
-      smoking: false,
     };
 
     if (finalAnswers.Q_RECENT_FYSIO === 'nee') {
@@ -651,7 +632,6 @@ const Questionnaire = () => {
 
     const bmi = finalAnswers.Q_BMI_CALC as number | undefined;
     if (bmi && bmi > 25) {
-      careNeeds.gli = true;
       careNeeds.diet = true;
     }
 
@@ -659,10 +639,6 @@ const Questionnaire = () => {
     const nutriAnswers = finalAnswers.Q_NUTRI_SCREEN as string[] | undefined;
     if (nutriAnswers && nutriAnswers.length > 0 && !nutriAnswers.includes('geen')) {
       careNeeds.diet = true;
-    }
-
-    if (finalAnswers.Q_SMOKING === 'ja') {
-      careNeeds.smoking = true;
     }
 
     // Get joint selection to pass to results
@@ -676,9 +652,7 @@ const Questionnaire = () => {
       physio: String(careNeeds.physio),
       physioNetwork: String(careNeeds.physioNetwork),
       ergo: String(careNeeds.ergo),
-      gli: String(careNeeds.gli),
       diet: String(careNeeds.diet),
-      smoking: String(careNeeds.smoking),
     }).toString();
 
     router.push(`/results?${query}`);

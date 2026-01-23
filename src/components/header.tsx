@@ -31,7 +31,7 @@ const Header = () => {
         <Link href="/" className="flex items-center gap-2.5">
           <Logo className="h-9 w-9 text-primary" />
           <span className="text-xl font-bold font-headline text-foreground">
-            Oscar
+            ZorgRoute Nederland
           </span>
         </Link>
 

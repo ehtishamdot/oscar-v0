@@ -6,9 +6,7 @@ import Header from '@/components/header';
 import {
   Stethoscope,
   Salad,
-  CigaretteOff,
   ShieldCheck,
-  Activity,
   HeartPulse,
   ArrowRight,
   Euro
@@ -33,9 +31,7 @@ function ResultsContent() {
         physio: searchParams.get('physio') === 'true',
         physioNetwork: searchParams.get('physioNetwork') === 'true',
         ergo: searchParams.get('ergo') === 'true',
-        gli: searchParams.get('gli') === 'true',
         diet: searchParams.get('diet') === 'true',
-        smoking: searchParams.get('smoking') === 'true',
     };
 
     const availablePathways: PathwayOption[] = [];
@@ -53,7 +49,7 @@ function ResultsContent() {
         availablePathways.push({
             id: 'ergo',
             title: 'Ergotherapie: Makkelijker dagelijks leven',
-            description: 'Praktische oplossingen voor thuis en werk. Heeft u moeite met dagelijkse dingen, zoals werk, huishouden of hobby\'s? De ergotherapeut leert u slimme manieren om dit makkelijker te doen. U leert hoe u uw activiteiten zo aanpakt dat u minder last heeft van uw klachten. We starten online en regelen daarna hulp bij u in de buurt.',
+            description: 'Heeft u moeite met dagelijkse dingen, zoals werk, huishouden of hobby\'s? De ergotherapeut leert u slimme manieren om dit makkelijker te doen. U leert hoe u uw activiteiten zo aanpakt dat u minder last heeft van uw klachten. We starten online en regelen daarna hulp bij u in de buurt. Ergotherapie wordt vergoed vanuit uw basisverzekering.',
             icon: <Stethoscope className="h-8 w-8 text-green-500" />,
         });
     }
@@ -64,24 +60,6 @@ function ResultsContent() {
             title: 'Voedingsbegeleiding: Afvallen & Herstellen',
             description: 'Wist u dat voeding veel invloed heeft op uw klachten? De diëtist helpt u niet alleen met gezond afvallen, maar zorgt ook voor voeding die uw herstel versnelt en ontstekingen remt. U krijgt een makkelijk plan dat bij u past. Gewoon vanuit huis te volgen.',
             icon: <Salad className="h-8 w-8 text-orange-500" />,
-        });
-    }
-
-    if (careNeeds.gli) {
-        availablePathways.push({
-            id: 'gli',
-            title: 'GLI Programma: Fitter worden & Blijven',
-            description: 'Wilt u lekkerder in uw vel zitten? Uw coach helpt u met bewegen en eten op een manier die u wél volhoudt. Geen streng dieet, maar stapsgewijs werken aan een gezond gewicht en meer energie. Volledig online begeleid.',
-            icon: <Activity className="h-8 w-8 text-purple-500" />,
-        });
-    }
-
-    if (careNeeds.smoking) {
-        availablePathways.push({
-            id: 'smoking',
-            title: 'Rookvrij: Geef uw herstel een boost',
-            description: 'Stoppen met roken zorgt direct voor een betere doorbloeding, waardoor uw lichaam sneller geneest. Met onze online aanpak staat u er niet alleen voor en is de kans dat het lukt veel groter.',
-            icon: <CigaretteOff className="h-8 w-8 text-red-500" />,
         });
     }
 
@@ -189,9 +167,9 @@ function ResultsContent() {
                                 <div>
                                     <CardTitle className="text-lg">Over de kosten</CardTitle>
                                     <CardDescription className="text-sm leading-relaxed mt-2">
-                                        U bent hiervoor verzekerd via uw basispakket. Dat betekent dat de verzekeraar
-                                        de kosten dekt. Heeft u uw eigen risico voor dit jaar nog niet verbruikt?
-                                        Dan wordt dat eerst aangesproken, net als bij een bezoek aan het ziekenhuis.
+                                        De zorg wordt vergoed vanuit uw basisverzekering. Heeft u uw eigen risico
+                                        voor dit jaar nog niet verbruikt? Dan wordt dat eerst aangesproken,
+                                        net als bij een bezoek aan het ziekenhuis of apotheek.
                                     </CardDescription>
                                 </div>
                             </CardHeader>
@@ -251,7 +229,7 @@ export default function ResultsPage() {
         </Suspense>
       </main>
       <footer className="py-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} Oscar. Alle rechten voorbehouden.
+        © {new Date().getFullYear()} ZorgRoute Nederland. Alle rechten voorbehouden.
       </footer>
     </div>
   );

@@ -286,9 +286,9 @@ const ergoQuestions: Question[] = [
   },
 ];
 
-// DIETIST Questionnaire - 8 sections
+// DIETIST Questionnaire - Revised based on dietitian feedback
 const dietQuestions: Question[] = [
-  // Section 1: Goals
+  // Section 1: Goals (expanded with chronic conditions)
   {
     id: 'diet_goals',
     text: 'Wat vind je belangrijk om hulp bij te krijgen?',
@@ -298,36 +298,35 @@ const dietQuestions: Question[] = [
       { id: 'healthy_eating', label: 'Gezond(er) eten' },
       { id: 'energy', label: 'Verbeteren energie / fitheid' },
       { id: 'strength', label: 'Voor opbouwen kracht' },
+      { id: 'diabetes', label: 'Diabetes / bloedsuikerproblemen' },
+      { id: 'blood_pressure', label: 'Hoge bloeddruk' },
+      { id: 'cholesterol', label: 'Hoog cholesterol' },
+      { id: 'allergy', label: 'Allergie / intolerantie' },
+      { id: 'gut_problems', label: 'Darmproblemen' },
       { id: 'other', label: 'Anders:', showTextField: true },
     ],
     required: true,
   },
-  // Section 2: Eating patterns
-  {
-    id: 'diet_meals_per_day',
-    text: 'Hoeveel maaltijden eet je gemiddeld per dag?',
-    type: 'radio',
-    options: [
-      { id: '1', label: '1' },
-      { id: '2', label: '2' },
-      { id: '3', label: '3' },
-      { id: 'more', label: 'Meer' },
-      { id: 'varies', label: 'Wisselend' },
-    ],
-    required: true,
-  },
+  // Section 2: Snacking habits (clarified)
   {
     id: 'diet_snacks',
-    text: 'Hoe vaak per week eet je snacks tussen maaltijden?',
-    type: 'radio',
+    text: 'Wat eet je meestal tussen de maaltijden door?',
+    subtext: 'Selecteer alles wat van toepassing is',
+    type: 'checkbox',
     options: [
-      { id: 'never', label: 'Nooit' },
-      { id: '1-3', label: '1–3 keer' },
-      { id: '4-6', label: '4–6 keer' },
-      { id: 'daily', label: 'Dagelijks' },
+      { id: 'nothing', label: 'Niets / zelden iets' },
+      { id: 'fruit', label: 'Fruit' },
+      { id: 'vegetables', label: 'Groenten (bv. komkommer, wortel)' },
+      { id: 'cookies', label: 'Koekjes / gebak' },
+      { id: 'chips', label: 'Chips / zoutjes' },
+      { id: 'candy', label: 'Snoep / chocolade' },
+      { id: 'drinks', label: 'Sap / frisdrank' },
+      { id: 'nuts', label: 'Noten' },
+      { id: 'other', label: 'Anders:', showTextField: true },
     ],
     required: true,
   },
+  // Section 3: Eating out
   {
     id: 'diet_eating_out',
     text: 'Hoe vaak eet je buiten de deur (restaurants/afhaal)?',
@@ -340,6 +339,7 @@ const dietQuestions: Question[] = [
     ],
     required: true,
   },
+  // Section 4: Meal replacements
   {
     id: 'diet_meal_replacements',
     text: 'Gebruik je maaltijdvervangers of dieetproducten?',
@@ -351,33 +351,25 @@ const dietQuestions: Question[] = [
     ],
     required: true,
   },
-  // Section 3: Preferences & intolerances
+  // Section 5: What do you watch (replaces "foods avoided")
   {
-    id: 'diet_allergies',
-    text: 'Heb je voedselallergieën of intoleranties?',
+    id: 'diet_watching',
+    text: 'Waar let je op bij eten?',
+    subtext: 'Selecteer alles wat van toepassing is',
     type: 'checkbox',
     options: [
-      { id: 'none', label: 'Geen' },
-      { id: 'lactose', label: 'Lactose' },
-      { id: 'gluten', label: 'Gluten' },
-      { id: 'nuts', label: 'Noten' },
-      { id: 'other', label: 'Andere:', showTextField: true },
+      { id: 'nothing', label: 'Nergens op / ik let niet op wat ik eet' },
+      { id: 'fat', label: 'Vet' },
+      { id: 'carbs', label: 'Koolhydraten' },
+      { id: 'calories', label: 'Calorieën' },
+      { id: 'sugar', label: 'Suiker' },
+      { id: 'salt', label: 'Zout' },
+      { id: 'protein', label: 'Eiwitten' },
+      { id: 'other', label: 'Anders:', showTextField: true },
     ],
     required: true,
   },
-  {
-    id: 'diet_avoid',
-    text: 'Zijn er voedingsmiddelen die je bewust vermijdt?',
-    type: 'checkbox',
-    options: [
-      { id: 'meat', label: 'Vlees' },
-      { id: 'dairy', label: 'Zuivel' },
-      { id: 'sugar', label: 'Suiker' },
-      { id: 'fat', label: 'Vette voeding' },
-      { id: 'other', label: 'Anders:', showTextField: true },
-    ],
-  },
-  // Section 4: Medical background
+  // Section 6: Medical conditions
   {
     id: 'diet_conditions',
     text: 'Heb je (één of meerdere) van de volgende aandoeningen?',
@@ -393,121 +385,67 @@ const dietQuestions: Question[] = [
     ],
     required: true,
   },
-  {
-    id: 'diet_medication',
-    text: 'Gebruik je medicatie of voedingssupplementen?',
-    type: 'radio',
-    options: [
-      { id: 'yes', label: 'Ja', showTextField: true },
-      { id: 'no', label: 'Nee' },
-    ],
-    required: true,
-  },
-  // Section 5: Lifestyle
+  // Section 7: Physical activity (with time specifications)
   {
     id: 'diet_activity',
     text: 'Hoe zou je jouw fysieke activiteit omschrijven?',
     type: 'radio',
     options: [
       { id: 'none', label: 'Weinig/geen beweging' },
-      { id: 'light', label: 'Lichte beweging' },
-      { id: 'moderate', label: 'Matig actief' },
-      { id: 'very', label: 'Zeer actief' },
+      { id: 'light', label: 'Licht actief (bv. wandelen, 30 min per dag)' },
+      { id: 'moderate', label: 'Matig actief (bv. 2-3 uur sport per week)' },
+      { id: 'very', label: 'Zeer actief (bv. dagelijks 1+ uur intensief)' },
     ],
     required: true,
   },
-  {
-    id: 'diet_water',
-    text: 'Hoeveel glazen water drink je per dag?',
-    type: 'radio',
-    options: [
-      { id: '0-1', label: '0–1 glazen' },
-      { id: '2-3', label: '2–3 glazen' },
-      { id: '4-5', label: '4–5 glazen' },
-      { id: '5+', label: 'Meer dan 5 glazen' },
-    ],
-    required: true,
-  },
-  {
-    id: 'diet_coffee',
-    text: 'Hoeveel koppen koffie/thee drink je per dag?',
-    type: 'radio',
-    options: [
-      { id: '0-1', label: '0–1 koppen' },
-      { id: '2-3', label: '2–3 koppen' },
-      { id: '4-5', label: '4–5 koppen' },
-      { id: '5+', label: 'Meer dan 5 koppen' },
-    ],
-    required: true,
-  },
-  {
-    id: 'diet_alcohol',
-    text: 'Hoe vaak drink je alcohol?',
-    type: 'radio',
-    options: [
-      { id: 'none', label: 'Geen' },
-      { id: '1-2', label: '1–2× per week' },
-      { id: '3-5', label: '3–5× per week' },
-      { id: 'daily', label: 'Dagelijks' },
-    ],
-    required: true,
-  },
-  // Section 6: Relationship with food
+  // Section 8: Relationship with food (expanded with emotional eating)
   {
     id: 'diet_relationship',
     text: 'Hoe ervaar je je relatie met eten?',
-    type: 'radio',
+    subtext: 'Selecteer alles wat van toepassing is',
+    type: 'checkbox',
     options: [
       { id: 'no_problems', label: 'Geen problemen' },
+      { id: 'emotional_sad', label: 'Ik eet als ik verdrietig ben' },
+      { id: 'emotional_stress', label: 'Ik eet als ik stress heb' },
+      { id: 'evening_snacking', label: 'Ik begin gezond maar eindig in de avond met snacks' },
       { id: 'binge', label: 'Eetbuien' },
-      { id: 'stress', label: 'Stresseten' },
       { id: 'too_little', label: 'Te weinig eten' },
       { id: 'other', label: 'Anders:', showTextField: true },
     ],
     required: true,
   },
+  // Section 9: General meal pattern (replaces yesterday's meals)
   {
-    id: 'diet_current_diet',
-    text: 'Ben je momenteel bezig met een dieet?',
+    id: 'diet_typical_meals',
+    text: 'Hoe ziet je eetpatroon er over het algemeen uit?',
+    subtext: 'Beschrijf een typische dag: ontbijt, lunch, avondeten',
+    type: 'textarea',
+    placeholder: 'Bijv. Ontbijt: brood met kaas, Lunch: salade, Avond: pasta met groenten...',
+    required: true,
+  },
+  // Section 10: Typical drinks
+  {
+    id: 'diet_typical_drinks',
+    text: 'Wat drink je normaal gesproken op een dag?',
+    type: 'textarea',
+    placeholder: 'Bijv. koffie, thee, water, frisdrank, sap...',
+  },
+  // Section 11: Who prepares food
+  {
+    id: 'diet_who_cooks',
+    text: 'Wie bereidt meestal het eten?',
     type: 'radio',
     options: [
-      { id: 'yes', label: 'Ja', showTextField: true },
-      { id: 'no', label: 'Nee' },
+      { id: 'self', label: 'Ikzelf' },
+      { id: 'partner', label: 'Mijn partner' },
+      { id: 'together', label: 'Samen' },
+      { id: 'other_person', label: 'Iemand anders' },
+      { id: 'varies', label: 'Wisselend' },
     ],
     required: true,
   },
-  // Section 7: Food diary
-  {
-    id: 'diet_breakfast',
-    text: 'Wat at je gisteren bij het ontbijt?',
-    type: 'textarea',
-    placeholder: 'Beschrijf je ontbijt',
-  },
-  {
-    id: 'diet_lunch',
-    text: 'Wat at je gisteren bij de lunch?',
-    type: 'textarea',
-    placeholder: 'Beschrijf je lunch',
-  },
-  {
-    id: 'diet_dinner',
-    text: 'Wat at je gisteren bij het diner?',
-    type: 'textarea',
-    placeholder: 'Beschrijf je diner',
-  },
-  {
-    id: 'diet_snacks_yesterday',
-    text: 'Welke tussendoortjes had je gisteren?',
-    type: 'textarea',
-    placeholder: 'Beschrijf je tussendoortjes',
-  },
-  {
-    id: 'diet_drinks_yesterday',
-    text: 'Wat dronk je gisteren?',
-    type: 'textarea',
-    placeholder: 'Beschrijf je dranken',
-  },
-  // Section 8: Extra info
+  // Section 12: Extra info
   {
     id: 'diet_extra',
     text: 'Is er nog iets dat belangrijk is voor je diëtist om te weten?',
@@ -682,7 +620,7 @@ const getIntroContent = (pathwayId: string, isFirst: boolean): TransitionContent
       title: 'Voedingsvragenlijst',
       message: 'We stellen nu vragen over uw eetpatroon en voeding. Goede voeding kan een belangrijke rol spelen bij uw herstel.',
       encouragement: 'Beantwoord de vragen zo eerlijk mogelijk - dit helpt de diëtist u beter te adviseren.',
-      estimatedTime: '± 5 minuten',
+      estimatedTime: '± 3 minuten',
     },
     smoking: {
       title: 'Vragenlijst Stoppen met Roken',
@@ -1398,7 +1336,7 @@ export default function IntakeQuestionsPage() {
         </Suspense>
       </main>
       <footer className="py-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} Oscar. Alle rechten voorbehouden.
+        © {new Date().getFullYear()} ZorgRoute Nederland. Alle rechten voorbehouden.
       </footer>
     </div>
   );

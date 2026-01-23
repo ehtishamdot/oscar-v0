@@ -164,7 +164,7 @@ export default function ConfirmationPage() {
         </div>
       </main>
       <footer className="py-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} Oscar. Alle rechten voorbehouden.
+        © {new Date().getFullYear()} ZorgRoute Nederland. Alle rechten voorbehouden.
       </footer>
     </div>
   );

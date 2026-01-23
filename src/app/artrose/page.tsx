@@ -25,8 +25,8 @@ export default function ArtrosePage() {
             <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center group-hover:scale-105 transition-transform">
               <Heart className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-2xl font-bold font-headline text-foreground">
-              Oscar
+            <span className="text-xl font-bold font-headline text-foreground">
+              ZorgRoute Nederland
             </span>
           </Link>
 
@@ -297,7 +297,7 @@ export default function ArtrosePage() {
               <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center">
                 <Heart className="h-5 w-5 text-white" />
               </div>
-              <span className="text-xl font-bold font-headline text-white">Oscar</span>
+              <span className="text-xl font-bold font-headline text-white">ZorgRoute Nederland</span>
             </div>
             <nav className="flex items-center gap-8 text-sm">
               <Link href="/leefstijl" className="hover:text-white transition-colors">Leefstijl</Link>
@@ -305,7 +305,7 @@ export default function ArtrosePage() {
               <Link href="/beperkingen" className="hover:text-white transition-colors">Dagelijks leven</Link>
             </nav>
             <p className="text-sm">
-              © {new Date().getFullYear()} Oscar Zorgcoördinatie
+              © {new Date().getFullYear()} ZorgRoute Nederland
             </p>
           </div>
         </div>

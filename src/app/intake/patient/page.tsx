@@ -495,7 +495,7 @@ function PatientIntakeContent() {
               <div>
                 <Label className="cursor-pointer font-medium">Privacyverklaring *</Label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Ik ga akkoord met de verwerking van mijn persoonsgegevens conform de AVG en het privacybeleid van Oscar.
+                  Ik ga akkoord met de verwerking van mijn persoonsgegevens conform de AVG en het privacybeleid van ZorgRoute Nederland.
                 </p>
               </div>
             </div>
@@ -603,7 +603,7 @@ export default function PatientIntakePage() {
         </Suspense>
       </main>
       <footer className="py-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} Oscar. Alle rechten voorbehouden.
+        © {new Date().getFullYear()} ZorgRoute Nederland. Alle rechten voorbehouden.
       </footer>
     </div>
   );

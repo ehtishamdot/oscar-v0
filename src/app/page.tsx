@@ -32,8 +32,7 @@ export default function Home() {
                   <div className="absolute -inset-1 bg-emerald-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-2xl font-bold text-slate-800">Oscar</span>
-                  <span className="text-xs text-emerald-600 font-medium -mt-1">Zorgcoördinatie</span>
+                  <span className="text-xl font-bold text-slate-800">ZorgRoute Nederland</span>
                 </div>
               </Link>
 
@@ -515,8 +514,7 @@ export default function Home() {
                 <Heart className="h-6 w-6 text-white" />
               </div>
               <div>
-                <span className="text-xl font-bold block">Oscar</span>
-                <span className="text-emerald-400 text-sm">Zorgcoördinatie</span>
+                <span className="text-xl font-bold block">ZorgRoute Nederland</span>
               </div>
             </div>
 
@@ -537,7 +535,7 @@ export default function Home() {
             </nav>
 
             <p className="text-slate-500 text-sm">
-              © {new Date().getFullYear()} Oscar Zorgcoördinatie
+              © {new Date().getFullYear()} ZorgRoute Nederland
             </p>
           </div>
         </div>

@@ -13,7 +13,7 @@ export default function QuestionnairePage() {
         </div>
       </main>
       <footer className="py-4 text-center text-xs text-muted-foreground/60">
-        © {new Date().getFullYear()} Oscar. Uw gegevens worden veilig verwerkt.
+        © {new Date().getFullYear()} ZorgRoute Nederland. Uw gegevens worden veilig verwerkt.
       </footer>
     </div>
   );

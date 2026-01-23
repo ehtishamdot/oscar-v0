@@ -36,7 +36,7 @@ function getFromEmail(): string {
 }
 
 function getFromName(): string {
-  return process.env.SMTP_FROM_NAME || 'Oscar Zorgcoordinatie';
+  return process.env.SMTP_FROM_NAME || 'ZorgRoute Nederland Zorgcoordinatie';
 }
 
 // ============================================================================
@@ -83,7 +83,7 @@ export async function sendReferralInviteEmail(params: ReferralInviteEmailParams)
   await getTransporter().sendMail({
     from: `"${getFromName()}" <${getFromEmail()}>`,
     to: to,
-    subject: `Oscar - ${urgency === 'urgent' ? '🚨 SPOED: ' : ''}Nieuwe patiënt beschikbaar in ${patientCity}`,
+    subject: `ZorgRoute Nederland - ${urgency === 'urgent' ? '🚨 SPOED: ' : ''}Nieuwe patiënt beschikbaar in ${patientCity}`,
     text: `
 Beste ${providerName},
 
@@ -103,12 +103,12 @@ ${viewUrl}
 Deze uitnodiging verloopt op ${expiresFormatted}.
 
 Met vriendelijke groet,
-Oscar Zorgcoordinatie
+ZorgRoute Nederland Zorgcoordinatie
     `.trim(),
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: #0066cc; color: white; padding: 20px; text-align: center;">
-          <h1 style="margin: 0;">Oscar</h1>
+          <h1 style="margin: 0;">ZorgRoute Nederland</h1>
           <p style="margin: 5px 0 0;">Zorgcoordinatie Platform</p>
         </div>
 
@@ -173,7 +173,7 @@ Oscar Zorgcoordinatie
         </div>
 
         <div style="background: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #666;">
-          <p style="margin: 0;">Oscar Zorgcoordinatie Platform</p>
+          <p style="margin: 0;">ZorgRoute Nederland Zorgcoordinatie Platform</p>
           <p style="margin: 5px 0 0;">Dit is een beveiligd bericht. Deel deze link niet met anderen.</p>
         </div>
       </div>
@@ -203,7 +203,7 @@ export async function sendPatientConfirmationEmail(params: PatientConfirmationEm
   await getTransporter().sendMail({
     from: `"${getFromName()}" <${getFromEmail()}>`,
     to: to,
-    subject: 'Oscar - Bevestiging van uw aanmelding',
+    subject: 'ZorgRoute Nederland - Bevestiging van uw aanmelding',
     text: `
 Beste ${patientName},
 
@@ -215,12 +215,12 @@ ${providerNames && providerNames.length > 0 ? `Uw zorgverlener(s): ${providerNam
 Uw gegevens zijn veilig versleuteld en doorgestuurd naar de betreffende zorgverlener(s). U ontvangt binnenkort bericht over de vervolgstappen.
 
 Met vriendelijke groet,
-Oscar Zorgcoordinatie
+ZorgRoute Nederland Zorgcoordinatie
     `.trim(),
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: #0066cc; color: white; padding: 20px; text-align: center;">
-          <h1 style="margin: 0;">Oscar</h1>
+          <h1 style="margin: 0;">ZorgRoute Nederland</h1>
           <p style="margin: 5px 0 0;">Zorgcoordinatie Platform</p>
         </div>
 
@@ -241,7 +241,7 @@ Oscar Zorgcoordinatie
         </div>
 
         <div style="background: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #666;">
-          <p style="margin: 0;">Oscar Zorgcoordinatie Platform</p>
+          <p style="margin: 0;">ZorgRoute Nederland Zorgcoordinatie Platform</p>
           <p style="margin: 5px 0 0;">Heeft u vragen? Neem contact op met uw zorgverlener.</p>
         </div>
       </div>
@@ -267,7 +267,7 @@ export async function sendProviderNotification(params: ProviderNotificationParam
   await getTransporter().sendMail({
     from: `"${getFromName()}" <${getFromEmail()}>`,
     to: to,
-    subject: 'Oscar - Nieuwe intake beschikbaar',
+    subject: 'ZorgRoute Nederland - Nieuwe intake beschikbaar',
     text: `
 Er staat een nieuwe patiënt intake klaar voor u.
 
@@ -282,12 +282,12 @@ ${accessUrl}
 Deze link is 24 uur geldig en kan slechts eenmaal worden gebruikt.
 
 Met vriendelijke groet,
-Oscar Zorgcoordinatie
+ZorgRoute Nederland Zorgcoordinatie
     `.trim(),
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: #0066cc; color: white; padding: 20px; text-align: center;">
-          <h1 style="margin: 0;">Oscar</h1>
+          <h1 style="margin: 0;">ZorgRoute Nederland</h1>
           <p style="margin: 5px 0 0;">Zorgcoordinatie Platform</p>
         </div>
 
@@ -315,7 +315,7 @@ Oscar Zorgcoordinatie
         </div>
 
         <div style="background: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #666;">
-          <p style="margin: 0;">Oscar Zorgcoordinatie Platform</p>
+          <p style="margin: 0;">ZorgRoute Nederland Zorgcoordinatie Platform</p>
           <p style="margin: 5px 0 0;">Dit is een beveiligd bericht. Deel deze link niet met anderen.</p>
         </div>
       </div>
@@ -348,7 +348,7 @@ export async function sendProviderAcceptedEmail(params: ProviderAcceptedEmailPar
   await getTransporter().sendMail({
     from: `"${getFromName()}" <${getFromEmail()}>`,
     to: to,
-    subject: `Oscar - Uw zorgverlener voor ${pathwayName} is gevonden`,
+    subject: `ZorgRoute Nederland - Uw zorgverlener voor ${pathwayName} is gevonden`,
     text: `
 Beste ${patientName},
 
@@ -361,12 +361,12 @@ ${contactInfo}
 Uw zorgverlener neemt binnenkort contact met u op om een afspraak te maken.
 
 Met vriendelijke groet,
-Oscar Zorgcoordinatie
+ZorgRoute Nederland Zorgcoordinatie
     `.trim(),
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: #0066cc; color: white; padding: 20px; text-align: center;">
-          <h1 style="margin: 0;">Oscar</h1>
+          <h1 style="margin: 0;">ZorgRoute Nederland</h1>
           <p style="margin: 5px 0 0;">Zorgcoordinatie Platform</p>
         </div>
 
@@ -410,7 +410,7 @@ Oscar Zorgcoordinatie
         </div>
 
         <div style="background: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #666;">
-          <p style="margin: 0;">Oscar Zorgcoordinatie Platform</p>
+          <p style="margin: 0;">ZorgRoute Nederland Zorgcoordinatie Platform</p>
           <p style="margin: 5px 0 0;">Heeft u vragen? Neem contact op met uw zorgverlener.</p>
         </div>
       </div>

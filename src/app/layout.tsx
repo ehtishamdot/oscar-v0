@@ -4,7 +4,7 @@ import './globals.css';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'Oscar - Zorgcoordinatie Platform',
+  title: 'ZorgRoute Nederland - Zorgcoordinatie Platform',
   description: 'Digitaal triageplatform voor veilige zorgcoördinatie en patiëntbegeleiding.',
 };
 
