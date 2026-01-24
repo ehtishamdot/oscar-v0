@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Oscar Testing Guide</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Oscar Testing Guide</h1>
+</header>
+<h1 id="oscar-platform-testing-guide">Oscar Platform Testing Guide</h1>
+<p><strong>Version:</strong> 1.0 <strong>Date:</strong> January 2026
+<strong>URL:</strong>
+https://oscar-zorgcoordinatie-482297690628.europe-west4.run.app</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>Oscar is a healthcare coordination platform that connects patients
+with care providers. This guide explains how to test the complete
+patient-to-provider flow using dummy test data.</p>
+<hr />
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>A valid email address (to receive test emails)</li>
+<li>Access to a terminal/command line (for API calls)</li>
+<li>Internet connection</li>
+</ul>
+<hr />
+<h2 id="step-1-create-test-providers">Step 1: Create Test Providers</h2>
+<p>Before testing, you need to create dummy providers in the system.
+These providers will receive referral emails at YOUR email address.</p>
+<h3 id="run-this-command">Run this command:</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-X</span> POST https://oscar-zorgcoordinatie-482297690628.europe-west4.run.app/api/test/seed-providers <span class="dt">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">&quot;Content-Type: application/json&quot;</span> <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">&#39;{&quot;email&quot;: &quot;YOUR-EMAIL@example.com&quot;}&#39;</span></span></code></pre></div>
+<p><strong>Replace <code>YOUR-EMAIL@example.com</code> with your actual
+email address.</strong></p>
+<h3 id="what-this-creates">What this creates:</h3>
+<table>
+<thead>
+<tr>
+<th>Provider Type</th>
+<th>Name</th>
+<th>Location</th>
+<th>Postcode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fysiotherapie</td>
+<td>Test Fysiotherapie Amsterdam</td>
+<td>Amsterdam</td>
+<td>1017AB</td>
+</tr>
+<tr>
+<td>Fysiotherapie</td>
+<td>Test Fysiotherapie Rotterdam</td>
+<td>Rotterdam</td>
+<td>3011AA</td>
+</tr>
+<tr>
+<td>Ergotherapie</td>
+<td>Test Ergotherapie Amsterdam</td>
+<td>Amsterdam</td>
+<td>1018CD</td>
+</tr>
+<tr>
+<td>Diëtist</td>
+<td>Test Diëtist Utrecht</td>
+<td>Utrecht</td>
+<td>3511AB</td>
+</tr>
+<tr>
+<td>Stoppen met Roken</td>
+<td>Test Stoppen met Roken Coach</td>
+<td>Den Haag</td>
+<td>2511AB</td>
+</tr>
+<tr>
+<td>GLI</td>
+<td>Test GLI Coach Amsterdam</td>
+<td>Amsterdam</td>
+<td>1019EF</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="step-2-complete-the-patient-journey">Step 2: Complete the
+Patient Journey</h2>
+<h3 id="start-the-questionnaire">2.1 Start the Questionnaire</h3>
+<ol type="1">
+<li>Open your browser</li>
+<li>Go to:
+<strong>https://oscar-zorgcoordinatie-482297690628.europe-west4.run.app</strong></li>
+<li>Click <strong>“Start de Vragenlijst”</strong> (Start the
+Questionnaire)</li>
+</ol>
+<h3 id="answer-the-12-questions">2.2 Answer the 12 Questions</h3>
+<p>Answer all questions about your health situation. The system will
+recommend care pathways based on your answers.</p>
+<h3 id="view-results">2.3 View Results</h3>
+<p>After completing the questionnaire, you’ll see a results page
+showing: - Recommended care pathways (Fysiotherapie, Ergotherapie, etc.)
+- Explanation of each recommendation</p>
+<h3 id="start-the-intake-form">2.4 Start the Intake Form</h3>
+<p>Click <strong>“Ga door naar intake”</strong> to continue to the
+intake form.</p>
+<h3 id="complete-the-intake-form">2.5 Complete the Intake Form</h3>
+<p>The intake form has several sections:</p>
+<h4 id="pathway-specific-questions">Pathway-Specific Questions</h4>
+<p>Answer questions related to your recommended care pathways.</p>
+<h4 id="personal-details">Personal Details</h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Test Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Naam (Name)</td>
+<td>Test Patient</td>
+</tr>
+<tr>
+<td>E-mail</td>
+<td>your-email@example.com</td>
+</tr>
+<tr>
+<td>Telefoon (Phone)</td>
+<td>0612345678</td>
+</tr>
+<tr>
+<td>Geboortedatum (Birth date)</td>
+<td>Any date</td>
+</tr>
+</tbody>
+</table>
+<h4 id="location-important">Location (Important!)</h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Test Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Postcode</strong></td>
+<td><strong>1017AB</strong></td>
+</tr>
+<tr>
+<td>Plaats (City)</td>
+<td>Amsterdam</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Use postcode <code>1017AB</code> to match with Amsterdam test
+providers.</strong></p>
+<h4 id="availability">Availability</h4>
+<p>Select some available time slots for appointments.</p>
+<h4 id="insurance-optional">Insurance (Optional)</h4>
+<p>Can be left empty for testing.</p>
+<h3 id="submit-the-form">2.6 Submit the Form</h3>
+<p>Click <strong>“Verstuur Aanvraag”</strong> (Submit Request)</p>
+<hr />
+<h2 id="step-3-verify-the-results">Step 3: Verify the Results</h2>
+<h3 id="check-your-email">3.1 Check Your Email</h3>
+<p>You should receive two emails:</p>
+<ol type="1">
+<li><strong>Provider Invitation Email</strong>
+<ul>
+<li>Subject: “Oscar - Nieuwe patiënt beschikbaar in Amsterdam”</li>
+<li>Contains a secure link to view patient details</li>
+<li>Shows patient initials, location, and care pathway</li>
+</ul></li>
+<li><strong>Patient Confirmation Email</strong>
+<ul>
+<li>Subject: “Oscar - Bevestiging van uw aanmelding”</li>
+<li>Confirms the intake was submitted</li>
+<li>Lists the selected care pathways</li>
+</ul></li>
+</ol>
+<h3 id="test-the-provider-portal">3.2 Test the Provider Portal</h3>
+<ol type="1">
+<li>Open the provider invitation email</li>
+<li>Click the <strong>“Bekijk Details &amp; Accepteer”</strong>
+button</li>
+<li>You’ll be taken to the secure provider portal</li>
+<li>Enter the verification code (sent to provider email)</li>
+<li>View the patient details and accept/decline the referral</li>
+</ol>
+<h3 id="check-firebase-console-optional">3.3 Check Firebase Console
+(Optional)</h3>
+<p>If you have access to Firebase Console:</p>
+<ol type="1">
+<li>Go to <strong>Firestore Database</strong></li>
+<li>Check these collections:
+<ul>
+<li><code>referrals</code> - Contains the new referral</li>
+<li><code>referral_invites</code> - Contains invites sent to
+providers</li>
+<li><code>encrypted_referral_data</code> - Contains encrypted patient
+data</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="test-postcodes-reference">Test Postcodes Reference</h2>
+<p>Use these postcodes to test matching with different provider
+types:</p>
+<table>
+<thead>
+<tr>
+<th>Postcode</th>
+<th>City</th>
+<th>Matches With</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1017AB</strong></td>
+<td>Amsterdam</td>
+<td>Fysio, Ergo, GLI</td>
+</tr>
+<tr>
+<td><strong>1018CD</strong></td>
+<td>Amsterdam</td>
+<td>Ergo</td>
+</tr>
+<tr>
+<td><strong>1019EF</strong></td>
+<td>Amsterdam</td>
+<td>GLI</td>
+</tr>
+<tr>
+<td><strong>3011AA</strong></td>
+<td>Rotterdam</td>
+<td>Fysio</td>
+</tr>
+<tr>
+<td><strong>3511AB</strong></td>
+<td>Utrecht</td>
+<td>Diet</td>
+</tr>
+<tr>
+<td><strong>2511AB</strong></td>
+<td>Den Haag</td>
+<td>Smoking</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="cleanup-after-testing">Cleanup After Testing</h2>
+<p>Remove all test providers when done:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-X</span> DELETE https://oscar-zorgcoordinatie-482297690628.europe-west4.run.app/api/test/seed-providers</span></code></pre></div>
+<hr />
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="no-email-received">No email received?</h3>
+<ul>
+<li>Check your spam/junk folder</li>
+<li>Verify SMTP settings are configured correctly</li>
+<li>Check that test providers were created successfully</li>
+</ul>
+<h3 id="no-providers-found-error">No providers found error?</h3>
+<ul>
+<li>Make sure you ran the seed-providers command first</li>
+<li>Use a postcode that matches test providers (e.g., 1017AB)</li>
+</ul>
+<h3 id="provider-portal-not-working">Provider portal not working?</h3>
+<ul>
+<li>The link expires after 7 days</li>
+<li>Each link can only be used once</li>
+<li>Check that the token in the URL is complete</li>
+</ul>
+<hr />
+<h2 id="support">Support</h2>
+<p>For technical issues, contact the development team.</p>
+<hr />
+<p><em>This document is for internal testing purposes only.</em></p>
+</body>
+</html>
