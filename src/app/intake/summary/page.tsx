@@ -260,6 +260,20 @@ function formatAnswer(questionId: string, answer: any): string {
     return answer.map(a => optionLabels[a] || a).join(', ');
   }
 
+  // Handle objects (rating_with_note answers)
+  if (typeof answer === 'object' && answer !== null) {
+    if ('rating' in answer) {
+      const rating = answer.rating;
+      const note = answer.note;
+      if (note) {
+        return `${rating}/10 - ${note}`;
+      }
+      return `${rating}/10`;
+    }
+    // Fallback for other objects
+    return JSON.stringify(answer);
+  }
+
   // Handle slider values (numbers)
   if (typeof answer === 'number') {
     if (questionId.includes('pain') || questionId.includes('motivation')) {
@@ -269,7 +283,7 @@ function formatAnswer(questionId: string, answer: any): string {
   }
 
   // Handle string values (radio/text)
-  return optionLabels[answer] || answer;
+  return optionLabels[answer] || String(answer);
 }
 
 function SummaryContent() {
