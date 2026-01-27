@@ -237,8 +237,22 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Testimonial Section - Mindler style */}
+        <section className="py-16 md:py-24 bg-calm">
+          <div className="max-w-3xl mx-auto px-5 sm:px-8 text-center">
+            <p className="text-[1.5rem] sm:text-[1.75rem] md:text-[2rem] leading-[1.35] tracking-[-0.015em] italic mb-6">
+              &ldquo;Het was sneller geregeld dan ik dacht&rdquo;
+            </p>
+            <div className="flex items-center justify-center gap-2 text-[0.85rem] text-[#8A8885]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <span>Maria, 72</span>
+              <span className="text-[#D1CEC6]">&mdash;</span>
+              <span>Den Haag</span>
+            </div>
+          </div>
+        </section>
+
         {/* Services Section */}
-        <section className="py-20 md:py-28 lg:py-32 bg-calm">
+        <section className="py-20 md:py-28 lg:py-32 bg-white">
           <div className="max-w-7xl mx-auto px-5 sm:px-8">
             <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
               {/* Image grid */}
@@ -325,18 +339,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Info Cards Section - Mindler service cards style */}
-        <section className="py-20 md:py-28 lg:py-32 bg-white">
+        {/* Service Cards Section - Mindler 3-column style */}
+        <section className="py-20 md:py-28 lg:py-32 bg-calm">
           <div className="max-w-5xl mx-auto px-5 sm:px-8">
-            <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
-              <h2 className="text-[1.75rem] md:text-[2.25rem] lg:text-[2.5rem] font-bold leading-[1.12] tracking-[-0.02em] mb-4">
-                Meer weten over uw klachten?
-              </h2>
-              <p className="text-[#5B5857] text-[1.05rem] leading-relaxed" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                Lees meer over hoe wij u kunnen helpen.
-              </p>
-            </div>
-
             <div className="grid sm:grid-cols-3 gap-5">
               {[
                 {
@@ -378,6 +383,38 @@ export default function Home() {
                       </span>
                     </div>
                   </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Topic Pills Section - Mindler "Informatie over" style */}
+        <section className="py-16 md:py-20 bg-white border-t border-[#E5E2DA]">
+          <div className="max-w-4xl mx-auto px-5 sm:px-8 text-center">
+            <h2 className="text-[1.5rem] md:text-[1.75rem] font-bold tracking-[-0.015em] mb-3">
+              Informatie over uw gezondheid
+            </h2>
+            <p className="text-[#5B5857] text-[0.92rem] mb-8 max-w-md mx-auto" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              Kom meer te weten over verschillende klachten en behandelingen.
+            </p>
+            <div className="flex flex-wrap justify-center gap-2.5">
+              {[
+                { label: 'Artrose', href: '/artrose' },
+                { label: 'Heupklachten', href: '/questionnaire' },
+                { label: 'Knieklachten', href: '/questionnaire' },
+                { label: 'Leefstijl', href: '/leefstijl' },
+                { label: 'Bewegen', href: '/leefstijl' },
+                { label: 'Dagelijks leven', href: '/beperkingen' },
+                { label: 'Fysiotherapie', href: '/questionnaire' },
+              ].map((pill) => (
+                <Link
+                  key={pill.label}
+                  href={pill.href}
+                  className="px-5 py-2.5 rounded-full border border-[#E5E2DA] text-[0.85rem] text-[#3D3B3A] hover:bg-[#1D1B1B] hover:text-white hover:border-[#1D1B1B] transition-all duration-200"
+                  style={{ fontFamily: 'Outfit, sans-serif' }}
+                >
+                  {pill.label}
                 </Link>
               ))}
             </div>
