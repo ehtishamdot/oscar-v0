@@ -271,26 +271,56 @@
 
   .card-calm {
     @apply bg-white rounded-2xl transition-all duration-300;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border: 1px solid #E5E2DA;
   }
 
   .card-calm:hover {
     @apply -translate-y-1;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+    border-color: #D1CEC6;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   }
 
   .btn-pill {
-    @apply inline-flex items-center justify-center font-semibold transition-all duration-300;
-    background-color: #059669;
+    @apply inline-flex items-center justify-center font-semibold transition-all duration-200;
+    background-color: #1D1B1B;
     color: white;
-    border-radius: 2em;
-    padding: 0.75em 2em;
+    border-radius: 4rem;
+    padding: 0.875em 2.25em;
+    letter-spacing: -0.01em;
   }
 
   .btn-pill:hover {
+    background-color: #333;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-pill-green {
+    @apply inline-flex items-center justify-center font-semibold transition-all duration-200;
+    background-color: #059669;
+    color: white;
+    border-radius: 4rem;
+    padding: 0.875em 2.25em;
+  }
+
+  .btn-pill-green:hover {
     background-color: #047857;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+    box-shadow: 0 4px 16px rgba(5, 150, 105, 0.25);
+  }
+
+  .btn-pill-outline {
+    @apply inline-flex items-center justify-center font-semibold transition-all duration-200;
+    background-color: transparent;
+    color: #1D1B1B;
+    border: 1.5px solid #1D1B1B;
+    border-radius: 4rem;
+    padding: 0.875em 2.25em;
+  }
+
+  .btn-pill-outline:hover {
+    background-color: #1D1B1B;
+    color: white;
   }
 
   .rounded-blob {
