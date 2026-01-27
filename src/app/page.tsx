@@ -13,7 +13,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-5 sm:px-8 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-lg icon-gradient flex items-center justify-center">
                 <Heart className="h-4 w-4 text-white" />
               </div>
               <span className="text-lg font-bold tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>ZorgRoute</span>
@@ -57,7 +57,7 @@ export default function Home() {
                   Hulp bij heup- en knieklachten
                 </p>
                 <h1 className="text-[2.25rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[4rem] font-bold leading-[1.08] tracking-[-0.025em] mb-6">
-                  Herstel begint hier
+                  <span className="text-gradient-emerald">Herstel</span> begint hier
                 </h1>
 
                 <p className="text-[1.05rem] md:text-lg text-[#5B5857] leading-[1.65] max-w-[460px] mx-auto lg:mx-0 mb-8" style={{ fontFamily: 'Outfit, sans-serif' }}>
@@ -119,8 +119,8 @@ export default function Home() {
                 },
               ].map((item, i) => (
                 <div key={i} className="text-center sm:text-left">
-                  <div className="w-10 h-10 rounded-full border border-[#E5E2DA] flex items-center justify-center mx-auto sm:mx-0 mb-4">
-                    <item.icon className="h-4.5 w-4.5 text-[#1D1B1B]" />
+                  <div className="w-10 h-10 rounded-full icon-gradient flex items-center justify-center mx-auto sm:mx-0 mb-4">
+                    <item.icon className="h-4.5 w-4.5 text-white" />
                   </div>
                   <h3 className="text-base font-bold mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>{item.title}</h3>
                   <p className="text-[0.85rem] text-[#5B5857] leading-[1.6]" style={{ fontFamily: 'Outfit, sans-serif' }}>{item.description}</p>
@@ -136,7 +136,7 @@ export default function Home() {
             <div className="text-center mb-14 md:mb-20">
               <h2 className="text-[1.75rem] sm:text-[2.25rem] md:text-[2.75rem] lg:text-[3.25rem] font-bold leading-[1.1] tracking-[-0.02em]">
                 Persoonlijke hulp in
-                <span className="text-emerald-600"> 3 stappen</span>
+                <span className="text-gradient-emerald"> 3 stappen</span>
               </h2>
               <p className="text-[#5B5857] text-[1.05rem] mt-4 max-w-lg mx-auto leading-relaxed" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Iedere klacht is anders. Daarom brengen we uw situatie eerst in kaart.
@@ -167,8 +167,8 @@ export default function Home() {
               ].map((item, i) => (
                 <Fragment key={i}>
                   <div className="card-calm p-8 lg:p-10 text-center flex flex-col items-center">
-                    <div className="w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center mb-5">
-                      <item.icon className="h-6 w-6 text-emerald-600" />
+                    <div className="w-14 h-14 rounded-full icon-gradient flex items-center justify-center mb-5">
+                      <item.icon className="h-6 w-6 text-white" />
                     </div>
                     <div className="text-xs font-bold text-emerald-600 tracking-widest uppercase mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>Stap {item.num}</div>
                     <h3 className="text-xl lg:text-[1.35rem] font-bold mb-3">{item.title}</h3>
@@ -207,8 +207,8 @@ export default function Home() {
               ].map((item, i) => (
                 <div key={i}>
                   <div className="card-calm p-5 flex items-start gap-4">
-                    <div className="w-11 h-11 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <item.icon className="h-5 w-5 text-emerald-600" />
+                    <div className="w-11 h-11 rounded-full icon-gradient flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <item.icon className="h-5 w-5 text-white" />
                     </div>
                     <div>
                       <div className="text-[0.7rem] font-bold text-emerald-600 tracking-widest uppercase mb-0.5" style={{ fontFamily: 'Outfit, sans-serif' }}>Stap {item.num}</div>
@@ -320,7 +320,7 @@ export default function Home() {
                     'Geen verwijzing van huisarts nodig',
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-emerald-600 flex items-center justify-center flex-shrink-0">
+                      <div className="w-5 h-5 rounded-full icon-gradient flex items-center justify-center flex-shrink-0">
                         <Check className="h-3 w-3 text-white" />
                       </div>
                       <span className="text-[#3D3B3A] text-[0.92rem]" style={{ fontFamily: 'Outfit, sans-serif' }}>{item}</span>
@@ -422,21 +422,21 @@ export default function Home() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 md:py-28 bg-[#1D1B1B] relative overflow-hidden">
-          <div className="absolute inset-0 opacity-20" style={{ background: 'radial-gradient(ellipse 50% 50% at 50% 110%, rgba(5,150,105,0.5), transparent)' }} />
+        <section className="py-20 md:py-28 bg-gradient-green relative overflow-hidden">
+          <div className="absolute inset-0 opacity-20" style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(255,255,255,0.2), transparent)' }} />
 
           <div className="max-w-2xl mx-auto px-5 sm:px-8 text-center relative z-10">
             <h2 className="text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold text-white leading-[1.12] tracking-[-0.02em] mb-5">
               Zet vandaag de eerste stap
             </h2>
 
-            <p className="text-[1.05rem] text-[#A8A6A3] leading-[1.6] mb-8 max-w-md mx-auto" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <p className="text-[1.05rem] text-emerald-100/80 leading-[1.6] mb-8 max-w-md mx-auto" style={{ fontFamily: 'Outfit, sans-serif' }}>
               Vul de korte vragenlijst in en ontdek welke hulp het beste bij u past.
               Binnen 2 minuten heeft u inzicht.
             </p>
 
             <Link href="/questionnaire">
-              <button className="btn-pill-green h-[52px] px-8 text-[0.95rem] flex items-center gap-2.5 mx-auto">
+              <button className="inline-flex items-center gap-2.5 h-[52px] px-8 text-[0.95rem] font-semibold rounded-full bg-white text-emerald-700 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 mx-auto">
                 Start nu met de vragenlijst
                 <ArrowRight className="h-4 w-4" />
               </button>
@@ -450,7 +450,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-5">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg icon-gradient flex items-center justify-center">
                 <Heart className="h-4 w-4 text-white" />
               </div>
               <span className="text-[0.9rem] font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>ZorgRoute Nederland</span>

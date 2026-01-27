@@ -297,16 +297,25 @@
 
   .btn-pill-green {
     @apply inline-flex items-center justify-center font-semibold transition-all duration-200;
-    background-color: #059669;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
     border-radius: 4rem;
     padding: 0.875em 2.25em;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
   }
 
   .btn-pill-green:hover {
-    background-color: #047857;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(5, 150, 105, 0.25);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+  }
+
+  .bg-gradient-green {
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 30%, #047857 60%, #059669 100%);
+  }
+
+  .icon-gradient {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   }
 
   .btn-pill-outline {
